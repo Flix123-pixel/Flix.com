@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flix - Upload, Watch & Earn Badges</title>
+    <style>
+        /* Base Styles & Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #0f0f0f;
+            color: #f1f1f1;
+            overflow-x: hidden;
+        }
+
+        /* Navbar (Header) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 60px;
+            background-color: #0f0f0f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ff0000;
+            text-decoration: none;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+        .search-bar {
+            display: flex;
+            flex: 0 1 600px;
+            align-items: center;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px 16px;
+            background-color: #121212;
+            border: 1px solid #303030;
+            border-radius: 20px 0 0 20px;
+            color: white;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #222222;
+            border: 1px solid #303030;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            color: white;
+            cursor: pointer;
+        }
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .upload-btn {
+            background-color: #3aa1f2;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #ff0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Layout */
+        .container { display: flex; height: calc(100vh - 60px); }
+        
+        /* Sidebar */
+        .sidebar { width: 240px; background-color: #0f0f0f; padding: 12px; overflow-y: auto; }
+        .sidebar-item { padding: 10px 12px; border-radius: 10px; cursor: pointer; margin-bottom: 4px; font-size: 14px; }
+        .sidebar-item:hover { background-color: #272727; }
+        .sidebar-divider { height: 1px; background-color: #303030; margin: 12px 0; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .video-section-title { margin: 20px 0 16px 0; font-size: 20px; font-weight: bold; }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .badge-none { background: #333; color: #aaa; }
+        .badge-bronze { background: linear-gradient(45deg, #cd7f32, #8b5a2b); color: white; }
+        .badge-silver { background: linear-gradient(45deg, #c0c0c0, #ececec); color: black; }
+        .badge-gold { background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+        .badge-heroic { background: linear-gradient(45deg, #ff0055, #9900ff); color: white; box-shadow: 0 0 10px #ff0055; }
+        .badge-godlike { background: linear-gradient(45deg, #00f2fe, #4facfe, #00f2fe); color: black; box-shadow: 0 0 15px #00f2fe; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #00f2fe; }
+            50% { box-shadow: 0 0 20px #00f2fe; }
+            100% { box-shadow: 0 0 5px #00f2fe; }
+        }
+
+        /* Long Videos (16:9) */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .video-card { cursor: pointer; transition: transform 0.2s; }
+        .video-card:hover { transform: scale(1.02); }
+        .thumbnail { width: 100%; aspect-ratio: 16/9; background-color: #303030; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; position: relative; background-size: cover; background-position: center; }
+        
+        /* Shorts (9:16) */
+        .shorts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .short-card { cursor: pointer; transition: transform 0.2s; }
+        .short-card:hover { transform: scale(1.05); }
+        .short-thumbnail { width: 100%; aspect-ratio: 9/16; background-color: #303030; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; text-align: center; padding: 10px; position: relative; background-size: cover; background-position: center; }
+        
+        .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        .video-info { display: flex; gap: 12px; }
+        .channel-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: #555; }
+        .video-details h3 { font-size: 16px; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .video-details p { font-size: 13px; color: #aaaaaa; margin-bottom: 2px; }
+
+        /* Modals (Upload & Player) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background-color: #212121; width: 600px; border-radius: 12px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #303030; padding-bottom: 12px; }
+        .close-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        
+        /* Upload Form */
+        .upload-area { border: 2px dashed #303030; border-radius: 8px; padding: 40px 20px; text-align: center; margin-bottom: 20px; background: #181818; position: relative; }
+        .upload-area input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaaaaa; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; background-color: #121212; border: 1px solid #303030; border-radius: 6px; color: white; outline: none; }
+        .submit-btn { background-color: #3aa1f2; color: black; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        
+        /* Video Player Modal */
+        .player-modal { width: 800px; }
+        .player-modal.short-player { width: 450px; } /* Thinner width for Shorts */
+        .video-container { width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+        .video-container video { width: 100%; height: auto; max-height: 60vh; outline: none; }
+        .player-title { font-size: 20px; margin-bottom: 8px; }
+        .player-stats { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #303030; margin-bottom: 12px; }
+        .boost-btn { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; border: none; padding: 6px 12px; border-radius: 18px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">FLIX</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search AI videos, Shorts, and more...">
+            <button>Search</button>
+        </div>
+        <div class="header-icons">
+            <button class="upload-btn" onclick="openModal('uploadModal')">+ Upload Video</button>
+            <div class="profile-pic">U</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-item">🏠 Home</div>
+            <div class="sidebar-item">⚡ Shorts</div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-item">🏆 Badges & Ranks</div>
+            <div class="sidebar-item" style="font-size: 12px; color: #888;">
+                • Bronze: 10k views<br>
+                • Silver: 50k views<br>
+                • Gold: 100k views<br>
+                • Heroic: 500k views<br>
+                • Godlike: 1M+ views
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="video-section-title">Long Videos (16:9)</div>
+            <div class="video-grid" id="longVideosGrid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="video-section-title">⚡ Flix Shorts (9:16)</div>
+            <div class="shorts-grid" id="shortsGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Upload to Flix</h2>
+                <button class="close-btn" onclick="closeModal('uploadModal')">×</button>
+            </div>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="videoFileInput" accept="video/mp4,video/x-m4v,video/*">
+                <div style="font-size: 40px; margin-bottom: 10px;">📂</div>
+                <p>Click or drag a video file here</p>
+                <p id="fileNameDisplay" style="color: #3aa1f2; margin-top: 10px; font-weight: bold;"></p>
+            </div>
+            <div class="form-group">
+                <label>Format</label>
+                <select id="uploadType">
+                    <option value="long">Long Video (16:9 Standard)</option>
+                    <option value="short">Short (9:16 Vertical)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="uploadTitle" placeholder="My Awesome Video">
+            </div>
+            <button class="submit-btn" onclick="submitVideo()">Upload & Publish</button>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal player-modal" id="playerModalInner">
+            <div class="modal-header">
+                <h2 id="playerModalType">Now Playing</h2>
+                <button class="close-btn" onclick="closePlayer()">×</button>
+            </div>
+            <div class="video-container">
+                <video id="actualVideoPlayer" controls autoplay></video>
+                <!-- Fallback for dummy AI videos without real files -->
+                <div id="dummyVideoPlaceholder" style="width: 100%; height: 400px; display: none; align-items: center; justify-content: center; font-size: 24px; color: white;"></div>
+            </div>
+            <h1 class="player-title" id="playerTitle">Video Title</h1>
+            <div class="player-stats">
+                <div>
+                    <span style="font-weight: bold;">@<span id="playerAuthor">Channel</span></span>
+                    <span id="playerBadgeDisplay"></span>
+                </div>
+                <div>
+                    <span id="playerViews" style="color: #aaa; margin-right: 15px;">0 views</span>
+                    <button class="boost-btn" onclick="boostViews()">🚀 Boost +50k Views</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        let currentPlayingId = null;
+
+        let db = {
+            videos: [
+                { id: 'v1', type: 'long', title: 'Cyber-Cat City Tour', author: 'AI_Genius', views: 95000, fileUrl: null, dummyBg: 'linear-gradient(45deg, #00c6ff, #0072ff)' },
+                { id: 'v2', type: 'long', title: 'Mars Base Beta', author: 'SpaceSim', views: 8000, fileUrl: null, dummyBg: 'linear-gradient(45deg, #f12711, #f5af19)' },
+            ],
+            shorts: [
+                { id: 's1', type: 'short', title: 'Neon Bear Dance', author: 'ShortsAI', views: 450000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #8A2387, #E94057)' },
+                { id: 's2', type: 'short', title: 'Matrix Frog', author: 'Glitch', views: 1200000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #1f4037, #99f2c8)' },
+            ]
+        };
+
+        let tempFileUrl = null;
+
+        // --- BADGE LOGIC ---
+        function getBadgeInfo(views) {
+            if (views >= 1000000) return { name: 'Godlike', class: 'badge-godlike' };
+            if (views >= 500000) return { name: 'Heroic', class: 'badge-heroic' };
+            if (views >= 100000) return { name: 'Gold', class: 'badge-gold' };
+            if (views >= 50000) return { name: 'Silver', class: 'badge-silver' };
+            if (views >= 10000) return { name: 'Bronze', class: 'badge-bronze' };
+            return { name: 'Novice', class: 'badge-none' };
+        }
+
+        function formatViews(views) {
+            if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';
+            if (views >= 1000) return (views / 1000).toFixed(1) + 'K';
+            return views;
+        }
+
+        // --- RENDER LOGIC ---
+        function renderUI() {
+            // Render Long Videos
+            const longGrid = document.getElementById('longVideosGrid');
+            longGrid.innerHTML = '';
+            db.videos.forEach(v => {
+                const badge = getBadgeInfo(v.views);
+                longGrid.innerHTML += `
+                    <div class="video-card" onclick="openPlayer('${v.id}', 'long')">
+                        <div class="thumbnail" style="${v.fileUrl ? 'background:#000;' : 'background:' + v.dummyBg}">
+                            ${v.fileUrl ? '▶️ Your Upload' : 'AI Render'}
+                            <span class="duration">${v.fileUrl ? 'Media' : '10:00'}</span>
+                        </div>
+                        <div class="video-info">
+                            <div class="channel-avatar"></div>
+                            <div class="video-details">
+                                <h3>${v.title}</h3>
+                                <p>@${v.author} <span class="badge ${badge.class}">${badge.name}</span></p>
+                                <p>${formatViews(v.views)} views</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render Shorts
+            const shortsGrid = document.getElementById('shortsGrid');
+            shortsGrid.innerHTML = '';
+            db.shorts.forEach(s => {
+                const badge = getBadgeInfo(s.views);
+                shortsGrid.innerHTML += `
+                    <div class="short-card" onclick="openPlayer('${s.id}', 'short')">
+                        <div class="short-thumbnail" style="${s.fileUrl ? 'background:#000;' : 'background:' + s.dummyBg}">
+                            ${s.fileUrl ? '▶️ Play' : s.title}
+                        </div>
+                        <div class="video-details">
+                            <h3>${s.title}</h3>
+                            <p>@${s.author} <span class="badge ${badge.class}">${badge.name}</span></p>
+                            <p>${formatViews(s.views)} views</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- UPLOAD LOGIC ---
+        document.getElementById('videoFileInput').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                document.getElementById('fileNameDisplay').innerText = `Selected: ${file.name}`;
+                tempFileUrl = URL.createObjectURL(file); // Create local playback URL
+            }
+        });
+
+        function submitVideo() {
+            const title = document.getElementById('uploadTitle').value || "Untitled Masterpiece";
+            const type = document.getElementById('uploadType').value;
+            
+            if (!tempFileUrl) {
+                alert("Please select a video file first!");
+                return;
+            }
+
+            const newVideo = {
+                id: 'up_' + Date.now(),
+                type: type,
+                title: title,
+                author: 'You',
+                views: 0, // Starts at 0!
+                fileUrl: tempFileUrl,
+                dummyBg: null
+            };
+
+            if (type === 'long') db.videos.unshift(newVideo);
+            else db.shorts.unshift(newVideo);
+
+            // Reset Form
+            document.getElementById('videoFileInput').value = '';
+            document.getElementById('uploadTitle').value = '';
+            document.getElementById('fileNameDisplay').innerText = '';
+            tempFileUrl = null;
+
+            closeModal('uploadModal');
+            renderUI();
+        }
+
+        // --- PLAYER LOGIC ---
+        function openPlayer(id, type) {
+            const list = type === 'long' ? db.videos : db.shorts;
+            const video = list.find(v => v.id === id);
+            if (!video) return;
+
+            currentPlayingId = id;
+            video.views++; // Increment view simply by opening
+            
+            const badge = getBadgeInfo(video.views);
+
+            document.getElementById('playerTitle').innerText = video.title;
+            document.getElementById('playerAuthor').innerText = video.author;
+            document.getElementById('playerViews').innerText = formatViews(video.views) + " views";
+            
+            const badgeEl = document.getElementById('playerBadgeDisplay');
+            badgeEl.className = `badge ${badge.class}`;
+            badgeEl.innerText = badge.name;
+
+            // Adjust Modal Shape based on video type
+            const modalInner = document.getElementById('playerModalInner');
+            if (type === 'short') {
+                modalInner.classList.add('short-player');
+            } else {
+                modalInner.classList.remove('short-player');
+            }
+
+            const actualPlayer = document.getElementById('actualVideoPlayer');
+            const dummyPl = document.getElementById('dummyVideoPlaceholder');
+
+            if (video.fileUrl) {
+                // It's a real user upload
+                dummyPl.style.display = 'none';
+                actualPlayer.style.display = 'block';
+                actualPlayer.src = video.fileUrl;
+            } else {
+                // Dummy AI video
+                actualPlayer.style.display = 'none';
+                actualPlayer.pause();
+                actualPlayer.src = "";
+                dummyPl.style.display = 'flex';
+                dummyPl.style.background = video.dummyBg;
+                dummyPl.innerText = "Simulated AI Video Playing...";
+            }
+
+            openModal('playerModal');
+            renderUI(); // Re-render to update view count on main screen
+        }
+
+        function closePlayer() {
+            const actualPlayer = document.getElementById('actualVideoPlayer');
+            actualPlayer.pause();
+            actualPlayer.src = "";
+            closeModal('playerModal');
+        }
+
+        function boostViews() {
+            if (!currentPlayingId) return;
+            
+            // Find which array it's in
+            let video = db.videos.find(v => v.id === currentPlayingId);
+            let type = 'long';
+            if (!video) {
+                video = db.shorts.find(v => v.id === currentPlayingId);
+                type = 'short';
+            }
+            if (!video) return;
+
+            // Boost views to show off badges!
+            video.views += 50000; 
+            
+            // Update UI instantly
+            const badge = getBadgeInfo(video.views);
+            document.getElementById('playerViews').innerText = formatViews(video.views) + " views";
+            const badgeEl = document.getElementById('playerBadgeDisplay');
+            badgeEl.className = `badge ${badge.class}`;
+            badgeEl.innerText = badge.name;
+            
+            renderUI();
+        }
+
+        // --- MODAL UTILS ---
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initial Render
+        renderUI();
+    </script>
+</body>
+</html>
