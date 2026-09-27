@@ -69,7 +69,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #303030; padding-bottom: 12px; }
         .close-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
         
-        /* Auth Forms */
+        /* Auth & Forms */
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaaaaa; }
         .form-group input, .form-group select { width: 100%; padding: 12px; background-color: #121212; border: 1px solid #303030; border-radius: 6px; color: white; outline: none; }
@@ -77,23 +77,14 @@
         .auth-switch { text-align: center; margin-top: 15px; font-size: 13px; color: #aaa; }
         .auth-switch span { color: #3aa1f2; cursor: pointer; font-weight: bold; }
 
-        /* Video Player Elements */
-        .video-container { width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-        .video-container video { width: 100%; height: auto; max-height: 50vh; outline: none; }
-        .player-title { font-size: 20px; margin-bottom: 8px; }
-        .player-stats { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #303030; }
-        .action-btns { display: flex; gap: 8px; }
-        .action-btn { background: #272727; color: white; border: none; padding: 8px 16px; border-radius: 18px; cursor: pointer; font-weight: bold; }
-        .action-btn:hover { background: #3f3f3f; }
-        .subscribe-btn { background: white; color: black; border: none; padding: 8px 16px; border-radius: 18px; font-weight: bold; cursor: pointer; margin-left: 12px; }
-        
-        /* Chat Sidebar (Instagram DM style) */
+        /* Chat Sidebar */
         .chat-sidebar { position: fixed; top: 60px; right: -350px; width: 350px; height: calc(100vh - 60px); background: #121212; border-left: 1px solid #222; transition: right 0.3s ease; z-index: 90; display: flex; flex-direction: column; }
         .chat-sidebar.open { right: 0; }
-        .chat-header { padding: 16px; border-bottom: 1px solid #222; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; }
+        .chat-header { padding: 16px; border-bottom: 1px solid #222; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .chat-header select { width: 100%; margin-top: 8px; padding: 8px; background: #222; color: white; border: 1px solid #333; border-radius: 6px; outline: none; }
         .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; }
-        .msg.received { background: #222; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; }
+        .msg.received { background: #333; align-self: flex-start; border-bottom-left-radius: 4px; }
         .msg.sent { background: #3aa1f2; color: black; align-self: flex-end; border-bottom-right-radius: 4px; }
         .chat-input { padding: 16px; border-top: 1px solid #222; display: flex; gap: 8px; }
         .chat-input input { flex: 1; padding: 10px; border-radius: 20px; border: none; background: #222; color: white; outline: none; }
@@ -124,13 +115,11 @@
             <button>Search</button>
         </div>
         <div class="header-icons">
-            <!-- These show when logged in -->
-            <button class="icon-btn" id="callBtn" onclick="openCallModal()" style="display:none;">📞</button>
-            <button class="icon-btn" id="chatBtn" onclick="toggleChat()" style="display:none;">💬</button>
+            <button class="icon-btn" id="callBtn" onclick="openCallSetup()" style="display:none;" title="Video Call">📞</button>
+            <button class="icon-btn" id="chatBtn" onclick="toggleChat()" style="display:none;" title="Messages">💬</button>
             <button class="upload-btn" id="uploadBtn" onclick="openModal('uploadModal')" style="display:none;">+ Upload</button>
             <div class="profile-pic" id="profilePic" onclick="logout()" style="display:none;" title="Click to Logout">U</div>
             
-            <!-- These show when logged out -->
             <div class="auth-buttons" id="authButtons">
                 <button class="auth-btn login-btn" onclick="openAuth('login')">Log In</button>
                 <button class="auth-btn signup-btn" onclick="openAuth('signup')">Sign Up</button>
@@ -158,11 +147,8 @@
 
         <!-- Main Content Area -->
         <div class="main-content">
-            
             <!-- Instagram Style Stories -->
-            <div class="stories-container" id="storiesContainer">
-                <!-- Injected via JS -->
-            </div>
+            <div class="stories-container" id="storiesContainer"></div>
 
             <!-- Long Videos Section -->
             <div id="longVideosSection">
@@ -180,15 +166,19 @@
         <!-- Right Side Chat Panel -->
         <div class="chat-sidebar" id="chatSidebar">
             <div class="chat-header">
-                Direct Messages
-                <button style="background:none; border:none; color:white; cursor:pointer;" onclick="toggleChat()">✖</button>
+                <div style="flex:1;">
+                    Direct Messages
+                    <select id="chatUserSelect" onchange="loadChat()">
+                        <option value="">Select a user to chat...</option>
+                    </select>
+                </div>
+                <button style="background:none; border:none; color:white; cursor:pointer; font-size:16px; margin-left:10px;" onclick="toggleChat()">✖</button>
             </div>
             <div class="chat-messages" id="chatMessages">
-                <div class="msg received">Hey! Did you see the new AI video?</div>
-                <div class="msg sent">Yeah, it's crazy!</div>
+                <div style="color:#aaa; text-align:center; margin-top:20px;">Select a user to start chatting!</div>
             </div>
             <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Message...">
+                <input type="text" id="chatInput" placeholder="Message..." onkeypress="if(event.key === 'Enter') sendMsg()">
                 <button onclick="sendMsg()">Send</button>
             </div>
         </div>
@@ -216,72 +206,53 @@
         </div>
     </div>
 
-    <!-- Upload Modal -->
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal">
+    <!-- Video Call Setup Modal -->
+    <div class="modal-overlay" id="callModal">
+        <!-- State 1: Select User -->
+        <div class="modal" id="callSetupScreen">
             <div class="modal-header">
-                <h2>Upload Video</h2>
-                <button class="close-btn" onclick="closeModal('uploadModal')">×</button>
+                <h2>Start Video Call</h2>
+                <button class="close-btn" onclick="closeModal('callModal')">×</button>
             </div>
             <div class="form-group">
-                <label>Format</label>
-                <select id="uploadType">
-                    <option value="long">Standard Video (16:9)</option>
-                    <option value="short">Shorts (9:16)</option>
+                <label>Select User to Call</label>
+                <select id="callUserSelect">
+                    <option value="">Select a user...</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="uploadTitle" placeholder="Video Title">
-            </div>
-            <button class="submit-btn" onclick="submitDummyUpload()">Publish</button>
+            <button class="submit-btn" style="background:#25D366; color:white;" onclick="startCallRinging()">Call Now</button>
         </div>
-    </div>
-
-    <!-- Video Call Modal -->
-    <div class="modal-overlay" id="callModal">
-        <div class="modal call-screen">
-            <h3 style="color:#aaa; margin-bottom:30px;">Incoming Video Call...</h3>
-            <div class="caller-avatar">AI</div>
-            <h2>AI_Genius</h2>
+        
+        <!-- State 2: Ringing Screen -->
+        <div class="modal call-screen" id="callRingingScreen" style="display:none;">
+            <h3 style="color:#aaa; margin-bottom:30px;">Calling...</h3>
+            <div class="caller-avatar" id="callingAvatar">U</div>
+            <h2 id="callingName">Username</h2>
             <div class="call-buttons">
-                <button class="call-btn decline" onclick="closeModal('callModal')">✖</button>
-                <button class="call-btn accept" onclick="alert('Camera permission denied.'); closeModal('callModal')">📞</button>
+                <button class="call-btn decline" onclick="closeModal('callModal')" title="End Call">✖</button>
             </div>
         </div>
     </div>
 
-    <!-- Video Player Modal -->
-    <div class="modal-overlay" id="playerModal">
-        <div class="modal player-modal" id="playerModalInner">
-            <div class="modal-header">
-                <h2>Now Playing</h2>
-                <button class="close-btn" onclick="closePlayer()">×</button>
-            </div>
-            <div class="video-container">
-                <div id="dummyVideoPlaceholder" style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white;">Simulating Video...</div>
-            </div>
-            <h1 class="player-title" id="playerTitle">Title</h1>
-            <div class="player-stats">
-                <div style="display: flex; align-items: center;">
-                    <span style="font-weight: bold; font-size: 16px;">@<span id="playerAuthor">Channel</span></span>
-                    <button class="subscribe-btn" onclick="this.innerText='Subscribed'; this.style.background='#333'; this.style.color='white';">Subscribe</button>
-                </div>
-                <div class="action-btns">
-                    <button class="action-btn" onclick="alert('Added to Liked Videos!')">👍 Like</button>
-                    <button class="action-btn" onclick="alert('Saved to Library!')">➕ Save</button>
-                    <span id="playerViews" style="color: #aaa; align-self: center; margin-left:10px;">0 views</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Script Block -->
     <script>
-        // --- 1. LOCAL STORAGE & AUTH SYSTEM ---
+        // --- 1. LOCAL STORAGE DATABASE (Users & Chats) ---
         let users = JSON.parse(localStorage.getItem('flix_users')) || [];
         let currentUser = JSON.parse(localStorage.getItem('flix_currentUser')) || null;
-        let authMode = 'signup'; // 'signup' or 'login'
+        let chats = JSON.parse(localStorage.getItem('flix_chats')) || {};
 
+        // Seed database with dummy accounts if empty so you have someone to talk to!
+        if(users.length === 0) {
+            users = [
+                {username: 'AI_Genius', password: '123'},
+                {username: 'SpaceSim', password: '123'},
+                {username: 'ShortsAI', password: '123'}
+            ];
+            localStorage.setItem('flix_users', JSON.stringify(users));
+        }
+
+        // --- 2. AUTHENTICATION ---
+        let authMode = 'signup'; 
         function openAuth(mode) {
             authMode = mode;
             document.getElementById('authTitle').innerText = mode === 'signup' ? 'Create Account' : 'Welcome Back';
@@ -298,29 +269,18 @@
         function handleAuth() {
             const user = document.getElementById('authUsername').value.trim();
             const pass = document.getElementById('authPassword').value.trim();
-
             if(!user || !pass) { alert("Please enter username and password."); return; }
 
             if(authMode === 'signup') {
-                // Check if exists
-                if(users.find(u => u.username === user)) {
-                    alert("Username already taken! Try logging in.");
-                    return;
-                }
+                if(users.find(u => u.username === user)) { alert("Username taken! Try logging in."); return; }
                 users.push({ username: user, password: pass });
                 localStorage.setItem('flix_users', JSON.stringify(users));
                 currentUser = user;
-                alert("Account created successfully!");
+                alert("Account created!");
             } else {
-                // Login
                 const found = users.find(u => u.username === user && u.password === pass);
-                if(found) {
-                    currentUser = user;
-                    alert("Logged in successfully!");
-                } else {
-                    alert("Invalid username or password.");
-                    return;
-                }
+                if(found) { currentUser = user; alert("Logged in!"); }
+                else { alert("Invalid username or password."); return; }
             }
 
             localStorage.setItem('flix_currentUser', JSON.stringify(currentUser));
@@ -347,6 +307,7 @@
                 const pic = document.getElementById('profilePic');
                 pic.style.display = 'flex';
                 pic.innerText = currentUser.charAt(0);
+                populateContacts(); // Populate dropdowns with other registered users
             } else {
                 document.getElementById('authButtons').style.display = 'flex';
                 document.getElementById('callBtn').style.display = 'none';
@@ -357,9 +318,100 @@
             }
         }
 
-        // --- 2. DATABASE & RENDERING ---
+        // --- 3. POPULATE DROPDOWNS (Real Users) ---
+        function populateContacts() {
+            const chatSelect = document.getElementById('chatUserSelect');
+            const callSelect = document.getElementById('callUserSelect');
+            
+            let optionsHTML = '<option value="">Select a user...</option>';
+            users.forEach(u => {
+                // Don't list the current user to themselves
+                if(u.username !== currentUser) {
+                    optionsHTML += `<option value="${u.username}">@${u.username}</option>`;
+                }
+            });
+            
+            chatSelect.innerHTML = optionsHTML;
+            callSelect.innerHTML = optionsHTML;
+        }
+
+        // --- 4. REAL CHAT LOGIC ---
+        function getChatKey(user1, user2) {
+            // Sort alphabetically so user1->user2 and user2->user1 use the same array
+            return [user1, user2].sort().join('_'); 
+        }
+
+        function toggleChat() {
+            document.getElementById('chatSidebar').classList.toggle('open');
+            if(document.getElementById('chatSidebar').classList.contains('open')) {
+                loadChat();
+            }
+        }
+
+        function loadChat() {
+            const targetUser = document.getElementById('chatUserSelect').value;
+            const msgsDiv = document.getElementById('chatMessages');
+            
+            if(!targetUser) {
+                msgsDiv.innerHTML = '<div style="color:#aaa; text-align:center; margin-top:20px;">Select a user to start chatting!</div>';
+                return;
+            }
+
+            const key = getChatKey(currentUser, targetUser);
+            const history = chats[key] || [];
+
+            msgsDiv.innerHTML = '';
+            if(history.length === 0) {
+                msgsDiv.innerHTML = '<div style="color:#aaa; text-align:center; margin-top:20px;">No messages yet. Say hi!</div>';
+            } else {
+                history.forEach(msg => {
+                    const isMe = msg.sender === currentUser;
+                    msgsDiv.innerHTML += `<div class="msg ${isMe ? 'sent' : 'received'}">${msg.text}</div>`;
+                });
+            }
+            msgsDiv.scrollTop = msgsDiv.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function sendMsg() {
+            const targetUser = document.getElementById('chatUserSelect').value;
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if(!targetUser) { alert('Please select a user to message from the dropdown first.'); return; }
+            if(!text) return;
+
+            const key = getChatKey(currentUser, targetUser);
+            if(!chats[key]) chats[key] = [];
+            
+            // Save to LocalStorage
+            chats[key].push({ sender: currentUser, text: text, timestamp: Date.now() });
+            localStorage.setItem('flix_chats', JSON.stringify(chats));
+            
+            input.value = '';
+            loadChat(); // Re-render chat box
+        }
+
+        // --- 5. REAL VIDEO CALL LOGIC ---
+        function openCallSetup() {
+            document.getElementById('callSetupScreen').style.display = 'block';
+            document.getElementById('callRingingScreen').style.display = 'none';
+            openModal('callModal');
+        }
+
+        function startCallRinging() {
+            const target = document.getElementById('callUserSelect').value;
+            if(!target) { alert('Please select a user to call from the dropdown.'); return; }
+
+            document.getElementById('callSetupScreen').style.display = 'none';
+            document.getElementById('callRingingScreen').style.display = 'block';
+            
+            document.getElementById('callingName').innerText = "@" + target;
+            document.getElementById('callingAvatar').innerText = target.charAt(0).toUpperCase();
+        }
+
+        // --- 6. RENDER VIDEO FEED ---
         let db = {
-            stories: ['AI_Genius', 'SpaceSim', 'ShortsAI', 'Glitch', 'CyberPunk', 'ElonFan', 'TechBro'],
+            stories: ['AI_Genius', 'SpaceSim', 'ShortsAI', 'Glitch', 'CyberPunk'],
             videos: [
                 { id: 'v1', type: 'long', title: 'Cyber-Cat City Tour', author: 'AI_Genius', views: 95000, bg: 'linear-gradient(45deg, #00c6ff, #0072ff)' },
                 { id: 'v2', type: 'long', title: 'Mars Base Beta', author: 'SpaceSim', views: 8000, bg: 'linear-gradient(45deg, #f12711, #f5af19)' },
@@ -370,21 +422,13 @@
             ]
         };
 
-        function formatNumbers(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num;
-        }
-
         function renderUI() {
             // Stories
             const storiesDiv = document.getElementById('storiesContainer');
             storiesDiv.innerHTML = '';
-            if(currentUser) {
-                storiesDiv.innerHTML += `<div class="story-item"><div class="story-ring" style="background:#555;"><div class="story-inner">+</div></div><span>Add</span></div>`;
-            }
+            if(currentUser) storiesDiv.innerHTML += `<div class="story-item"><div class="story-ring" style="background:#555;"><div class="story-inner">+</div></div><span>Add</span></div>`;
             db.stories.forEach(s => {
-                storiesDiv.innerHTML += `<div class="story-item" onclick="alert('Viewing story from @${s}')"><div class="story-ring"><div class="story-inner">${s.charAt(0)}</div></div><span>${s}</span></div>`;
+                storiesDiv.innerHTML += `<div class="story-item"><div class="story-ring"><div class="story-inner">${s.charAt(0)}</div></div><span>${s}</span></div>`;
             });
 
             // Long Videos
@@ -392,9 +436,9 @@
             longGrid.innerHTML = '';
             db.videos.forEach(v => {
                 longGrid.innerHTML += `
-                    <div class="video-card" onclick="openPlayer('${v.id}', 'long')">
+                    <div class="video-card">
                         <div class="thumbnail" style="background:${v.bg}">▶️<span class="duration">10:00</span></div>
-                        <div><strong>${v.title}</strong><br><span style="color:#aaa;font-size:13px;">@${v.author} • ${formatNumbers(v.views)} views</span></div>
+                        <div><strong>${v.title}</strong><br><span style="color:#aaa;font-size:13px;">@${v.author} • ${(v.views/1000).toFixed(1)}K views</span></div>
                     </div>`;
             });
 
@@ -403,81 +447,22 @@
             shortsGrid.innerHTML = '';
             db.shorts.forEach(s => {
                 shortsGrid.innerHTML += `
-                    <div class="short-card" onclick="openPlayer('${s.id}', 'short')">
+                    <div class="short-card">
                         <div class="short-thumbnail" style="background:${s.bg}">▶️</div>
-                        <div><strong>${s.title}</strong><br><span style="color:#aaa;font-size:12px;">@${s.author} • ${formatNumbers(s.views)} views</span></div>
+                        <div><strong>${s.title}</strong><br><span style="color:#aaa;font-size:12px;">@${s.author}</span></div>
                     </div>`;
             });
-        }
-
-        // --- 3. FEATURES (Upload, Player, Chat, Call) ---
-        function submitDummyUpload() {
-            if(!currentUser) return;
-            const title = document.getElementById('uploadTitle').value || "My New Video";
-            const type = document.getElementById('uploadType').value;
-            
-            const newVid = {
-                id: 'up_' + Date.now(),
-                type: type,
-                title: title,
-                author: currentUser,
-                views: 0,
-                bg: 'linear-gradient(45deg, #333, #555)'
-            };
-
-            if(type === 'long') db.videos.unshift(newVid);
-            else db.shorts.unshift(newVid);
-
-            closeModal('uploadModal');
-            document.getElementById('uploadTitle').value = '';
-            renderUI();
-        }
-
-        function openPlayer(id, type) {
-            const list = type === 'long' ? db.videos : db.shorts;
-            const video = list.find(v => v.id === id);
-            if(!video) return;
-
-            video.views += 15; // Fake view boost
-            document.getElementById('playerTitle').innerText = video.title;
-            document.getElementById('playerAuthor').innerText = video.author;
-            document.getElementById('playerViews').innerText = formatNumbers(video.views) + " views";
-            document.getElementById('dummyVideoPlaceholder').style.background = video.bg;
-
-            const modalInner = document.getElementById('playerModalInner');
-            type === 'short' ? modalInner.classList.add('short-player') : modalInner.classList.remove('short-player');
-            
-            openModal('playerModal');
-            renderUI();
-        }
-
-        function closePlayer() { closeModal('playerModal'); }
-
-        function toggleChat() {
-            document.getElementById('chatSidebar').classList.toggle('open');
-        }
-
-        function sendMsg() {
-            const input = document.getElementById('chatInput');
-            if(!input.value.trim()) return;
-            document.getElementById('chatMessages').innerHTML += `<div class="msg sent">${input.value}</div>`;
-            input.value = '';
-            const msgs = document.getElementById('chatMessages');
-            msgs.scrollTop = msgs.scrollHeight;
-        }
-
-        function openCallModal() { openModal('callModal'); }
-
-        function switchTab(tabName) {
-            document.getElementById('longVideosSection').style.display = tabName === 'home' ? 'block' : 'none';
-            document.getElementById('storiesContainer').style.display = tabName === 'home' ? 'flex' : 'none';
         }
 
         // --- UTILS ---
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function switchTab(tabName) {
+            document.getElementById('longVideosSection').style.display = tabName === 'home' ? 'block' : 'none';
+            document.getElementById('storiesContainer').style.display = tabName === 'home' ? 'flex' : 'none';
+        }
 
-        // Init
+        // Init App
         updateAuthUI();
         renderUI();
     </script>
