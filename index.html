@@ -140,7 +140,7 @@
         
         .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
         .video-info { display: flex; gap: 12px; }
-        .channel-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: #555; }
+        .channel-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: #555; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         .video-details h3 { font-size: 16px; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .video-details p { font-size: 13px; color: #aaaaaa; margin-bottom: 2px; }
 
@@ -159,13 +159,38 @@
         .submit-btn { background-color: #3aa1f2; color: black; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
         
         /* Video Player Modal */
-        .player-modal { width: 800px; }
-        .player-modal.short-player { width: 450px; } 
+        .player-modal { width: 850px; }
+        .player-modal.short-player { width: 500px; } 
         .video-container { width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
-        .video-container video { width: 100%; height: auto; max-height: 60vh; outline: none; }
+        .video-container video { width: 100%; height: auto; max-height: 50vh; outline: none; }
         .player-title { font-size: 20px; margin-bottom: 8px; }
-        .player-stats { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #303030; margin-bottom: 12px; }
+        .player-stats { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #303030; }
         
+        .subscribe-btn { background: white; color: black; border: none; padding: 6px 16px; border-radius: 18px; font-weight: bold; cursor: pointer; margin-left: 12px; }
+        .subscribe-btn.subscribed { background: #303030; color: white; }
+        
+        .action-btns { display: flex; gap: 8px; align-items: center; }
+        .action-btn { background: #272727; color: white; border: none; padding: 6px 12px; border-radius: 18px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: bold; }
+        .action-btn:hover { background: #3f3f3f; }
+
+        /* Comments Section */
+        .comments-section { margin-top: 16px; }
+        .comments-header { font-weight: bold; margin-bottom: 12px; font-size: 16px; }
+        .comment-input-area { display: flex; gap: 12px; margin-bottom: 20px; }
+        .comment-input-area input { flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 1px solid #555; color: white; outline: none; transition: border-color 0.2s; }
+        .comment-input-area input:focus { border-bottom: 2px solid #3aa1f2; }
+        .comment-btn { background: #3aa1f2; color: black; border: none; padding: 6px 16px; border-radius: 18px; font-weight: bold; cursor: pointer; }
+        
+        .comment-list { max-height: 200px; overflow-y: auto; padding-right: 10px; }
+        .comment-item { display: flex; gap: 12px; margin-bottom: 16px; }
+        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; background: #444; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .comment-content h4 { font-size: 13px; margin-bottom: 4px; display: flex; gap: 8px; align-items: center; }
+        .comment-time { font-size: 11px; color: #888; font-weight: normal; }
+        .comment-text { font-size: 14px; line-height: 1.4; color: #eee; }
+        
+        /* Custom Scrollbar for comments */
+        .comment-list::-webkit-scrollbar { width: 6px; }
+        .comment-list::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -178,7 +203,7 @@
         </div>
         <div class="header-icons">
             <button class="upload-btn" id="uploadBtn" onclick="openModal('uploadModal')">+ Upload Video</button>
-            <div class="profile-pic" id="profilePic">U</div>
+            <div class="profile-pic" id="profilePic">Me</div>
         </div>
     </header>
 
@@ -200,7 +225,6 @@
 
         <!-- Main Content Area -->
         <div class="main-content">
-            
             <!-- Long Videos Section -->
             <div id="longVideosSection">
                 <div class="video-section-title">Long Videos (16:9)</div>
@@ -216,7 +240,6 @@
                     <!-- Injected via JS -->
                 </div>
             </div>
-            
         </div>
     </div>
 
@@ -233,6 +256,12 @@
                 <p>Click or drag a video file here</p>
                 <p id="fileNameDisplay" style="color: #3aa1f2; margin-top: 10px; font-weight: bold;"></p>
             </div>
+            
+            <div class="form-group">
+                <label>Your Channel / Creator Name</label>
+                <input type="text" id="uploadAuthor" placeholder="e.g., GamingLegend99" value="My Awesome Channel">
+            </div>
+
             <div class="form-group">
                 <label>Format</label>
                 <select id="uploadType">
@@ -240,15 +269,17 @@
                     <option value="short">Short (9:16 Vertical)</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" id="uploadTitle" placeholder="My Awesome Video">
             </div>
+            
             <button class="submit-btn" onclick="submitVideo()">Upload & Publish</button>
         </div>
     </div>
 
-    <!-- Video Player Modal -->
+    <!-- Video Player Modal with Comments -->
     <div class="modal-overlay" id="playerModal">
         <div class="modal player-modal" id="playerModalInner">
             <div class="modal-header">
@@ -257,18 +288,34 @@
             </div>
             <div class="video-container">
                 <video id="actualVideoPlayer" controls autoplay></video>
-                <div id="dummyVideoPlaceholder" style="width: 100%; height: 400px; display: none; align-items: center; justify-content: center; font-size: 24px; color: white;"></div>
+                <div id="dummyVideoPlaceholder" style="width: 100%; height: 350px; display: none; align-items: center; justify-content: center; font-size: 24px; color: white;"></div>
             </div>
             <h1 class="player-title" id="playerTitle">Video Title</h1>
             <div class="player-stats">
-                <div>
-                    <span style="font-weight: bold;">@<span id="playerAuthor">Channel</span></span>
+                <div style="display: flex; align-items: center;">
+                    <span style="font-weight: bold; font-size: 16px;">@<span id="playerAuthor">Channel</span></span>
                     <span id="playerBadgeDisplay"></span>
+                    <button id="subscribeBtn" class="subscribe-btn" onclick="toggleSubscribe()">Subscribe</button>
                 </div>
-                <div>
-                    <span id="playerViews" style="color: #aaa;">0 views</span>
+                <div class="action-btns">
+                    <button class="action-btn" onclick="likeVideo()">👍 <span id="playerLikes">0</span></button>
+                    <span id="playerViews" style="color: #aaa; margin-left: 10px;">0 views</span>
                 </div>
             </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <div class="comments-header" id="commentCountHeader">0 Comments</div>
+                <div class="comment-input-area">
+                    <div class="comment-avatar" style="background: #ff0000;">Me</div>
+                    <input type="text" id="newCommentInput" placeholder="Add a comment...">
+                    <button class="comment-btn" onclick="submitComment()">Post</button>
+                </div>
+                <div class="comment-list" id="commentsList">
+                    <!-- Comments injected via JS -->
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -298,18 +345,30 @@
 
         let db = {
             videos: [
-                { id: 'v1', type: 'long', title: 'Cyber-Cat City Tour', author: 'AI_Genius', views: 95000, fileUrl: null, dummyBg: 'linear-gradient(45deg, #00c6ff, #0072ff)' },
-                { id: 'v2', type: 'long', title: 'Mars Base Beta', author: 'SpaceSim', views: 8000, fileUrl: null, dummyBg: 'linear-gradient(45deg, #f12711, #f5af19)' },
+                { 
+                    id: 'v1', type: 'long', title: 'Cyber-Cat City Tour', author: 'AI_Genius', views: 95000, likes: 12400, fileUrl: null, dummyBg: 'linear-gradient(45deg, #00c6ff, #0072ff)',
+                    comments: [{user: 'CatLover', text: 'This looks so futuristic!'}, {user: 'TechBro', text: 'What AI model was used for this?'}]
+                },
+                { 
+                    id: 'v2', type: 'long', title: 'Mars Base Beta', author: 'SpaceSim', views: 8000, likes: 520, fileUrl: null, dummyBg: 'linear-gradient(45deg, #f12711, #f5af19)',
+                    comments: [{user: 'ElonFan', text: 'Soon.'}]
+                },
             ],
             shorts: [
-                { id: 's1', type: 'short', title: 'Neon Bear Dance', author: 'ShortsAI', views: 450000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #8A2387, #E94057)' },
-                { id: 's2', type: 'short', title: 'Matrix Frog', author: 'Glitch', views: 1200000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #1f4037, #99f2c8)' },
+                { 
+                    id: 's1', type: 'short', title: 'Neon Bear Dance', author: 'ShortsAI', views: 450000, likes: 89000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #8A2387, #E94057)',
+                    comments: [{user: 'Dancer99', text: 'He got moves! 🐻'}, {user: 'User123', text: 'First!'}]
+                },
+                { 
+                    id: 's2', type: 'short', title: 'Matrix Frog', author: 'Glitch', views: 1200000, likes: 310000, fileUrl: null, dummyBg: 'linear-gradient(to bottom, #1f4037, #99f2c8)',
+                    comments: [{user: 'Neo', text: 'Whoa.'}]
+                },
             ]
         };
 
         let tempFileUrl = null;
 
-        // --- BADGE LOGIC ---
+        // --- UTILS ---
         function getBadgeInfo(views) {
             if (views >= 1000000) return { name: 'Godlike', class: 'badge-godlike' };
             if (views >= 500000) return { name: 'Heroic', class: 'badge-heroic' };
@@ -319,13 +378,13 @@
             return { name: 'Novice', class: 'badge-none' };
         }
 
-        function formatViews(views) {
-            if (views >= 1000000) return (views / 1000000).toFixed(1) + 'M';
-            if (views >= 1000) return (views / 1000).toFixed(1) + 'K';
-            return views;
+        function formatNumbers(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num;
         }
 
-        // --- RENDER LOGIC ---
+        // --- RENDER MAIN UI ---
         function renderUI() {
             // Render Long Videos
             const longGrid = document.getElementById('longVideosGrid');
@@ -339,11 +398,11 @@
                             <span class="duration">${v.fileUrl ? 'Media' : '10:00'}</span>
                         </div>
                         <div class="video-info">
-                            <div class="channel-avatar"></div>
+                            <div class="channel-avatar">${v.author.charAt(0).toUpperCase()}</div>
                             <div class="video-details">
                                 <h3>${v.title}</h3>
                                 <p>@${v.author} <span class="badge ${badge.class}">${badge.name}</span></p>
-                                <p>${formatViews(v.views)} views</p>
+                                <p>${formatNumbers(v.views)} views</p>
                             </div>
                         </div>
                     </div>
@@ -363,7 +422,7 @@
                         <div class="video-details">
                             <h3>${s.title}</h3>
                             <p>@${s.author} <span class="badge ${badge.class}">${badge.name}</span></p>
-                            <p>${formatViews(s.views)} views</p>
+                            <p>${formatNumbers(s.views)} views</p>
                         </div>
                     </div>
                 `;
@@ -381,6 +440,7 @@
 
         function submitVideo() {
             const title = document.getElementById('uploadTitle').value || "Untitled Masterpiece";
+            const author = document.getElementById('uploadAuthor').value || "AnonymousCreator";
             const type = document.getElementById('uploadType').value;
             
             if (!tempFileUrl) {
@@ -392,10 +452,12 @@
                 id: 'up_' + Date.now(),
                 type: type,
                 title: title,
-                author: 'You',
+                author: author,
                 views: 0, 
+                likes: 0,
                 fileUrl: tempFileUrl,
-                dummyBg: null
+                dummyBg: null,
+                comments: []
             };
 
             if (type === 'long') db.videos.unshift(newVideo);
@@ -412,9 +474,14 @@
         }
 
         // --- PLAYER LOGIC ---
+        function getVideo(id) {
+            let video = db.videos.find(v => v.id === id);
+            if (!video) video = db.shorts.find(v => v.id === id);
+            return video;
+        }
+
         function openPlayer(id, type) {
-            const list = type === 'long' ? db.videos : db.shorts;
-            const video = list.find(v => v.id === id);
+            const video = getVideo(id);
             if (!video) return;
 
             currentPlayingId = id;
@@ -422,13 +489,23 @@
             
             const badge = getBadgeInfo(video.views);
 
+            // Populate Metadata
             document.getElementById('playerTitle').innerText = video.title;
             document.getElementById('playerAuthor').innerText = video.author;
-            document.getElementById('playerViews').innerText = formatViews(video.views) + " views";
+            document.getElementById('playerViews').innerText = formatNumbers(video.views) + " views";
+            document.getElementById('playerLikes').innerText = formatNumbers(video.likes);
             
+            // Subscribe button reset
+            const subBtn = document.getElementById('subscribeBtn');
+            subBtn.innerText = "Subscribe";
+            subBtn.classList.remove('subscribed');
+
             const badgeEl = document.getElementById('playerBadgeDisplay');
             badgeEl.className = `badge ${badge.class}`;
             badgeEl.innerText = badge.name;
+
+            // Render Comments
+            renderComments();
 
             // Adjust Modal Shape based on video type
             const modalInner = document.getElementById('playerModalInner');
@@ -438,6 +515,7 @@
                 modalInner.classList.remove('short-player');
             }
 
+            // Video Player
             const actualPlayer = document.getElementById('actualVideoPlayer');
             const dummyPl = document.getElementById('dummyVideoPlaceholder');
 
@@ -455,15 +533,79 @@
             }
 
             openModal('playerModal');
-            renderUI();
+            renderUI(); // Update views in main UI
         }
 
         function closePlayer() {
             const actualPlayer = document.getElementById('actualVideoPlayer');
             actualPlayer.pause();
             actualPlayer.src = "";
+            currentPlayingId = null;
             closeModal('playerModal');
         }
+
+        // --- INTERACTION LOGIC (Likes, Subscribe, Comments) ---
+        function toggleSubscribe() {
+            const subBtn = document.getElementById('subscribeBtn');
+            if(subBtn.classList.contains('subscribed')) {
+                subBtn.classList.remove('subscribed');
+                subBtn.innerText = "Subscribe";
+            } else {
+                subBtn.classList.add('subscribed');
+                subBtn.innerText = "Subscribed";
+            }
+        }
+
+        function likeVideo() {
+            if(!currentPlayingId) return;
+            const video = getVideo(currentPlayingId);
+            video.likes++;
+            document.getElementById('playerLikes').innerText = formatNumbers(video.likes);
+        }
+
+        function renderComments() {
+            if(!currentPlayingId) return;
+            const video = getVideo(currentPlayingId);
+            
+            document.getElementById('commentCountHeader').innerText = `${video.comments.length} Comments`;
+            const listEl = document.getElementById('commentsList');
+            listEl.innerHTML = '';
+
+            // Render from newest to oldest
+            [...video.comments].reverse().forEach(c => {
+                listEl.innerHTML += `
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: #${Math.floor(Math.random()*16777215).toString(16)};">${c.user.charAt(0)}</div>
+                        <div class="comment-content">
+                            <h4>@${c.user} <span class="comment-time">just now</span></h4>
+                            <div class="comment-text">${c.text}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function submitComment() {
+            const inputEl = document.getElementById('newCommentInput');
+            const text = inputEl.value.trim();
+            if(!text || !currentPlayingId) return;
+
+            const video = getVideo(currentPlayingId);
+            video.comments.push({
+                user: 'Me',
+                text: text
+            });
+
+            inputEl.value = ''; // clear input
+            renderComments(); // refresh list
+        }
+
+        // Allow pressing Enter to submit comment
+        document.getElementById('newCommentInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                submitComment();
+            }
+        });
 
         // --- MODAL UTILS ---
         function openModal(modalId) {
