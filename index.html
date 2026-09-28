@@ -42,8 +42,9 @@
         .search-bar button { padding: 8px 16px; background: #262630; border: 1px solid var(--border); border-left: none; border-radius: 0 20px 20px 0; color: #fff; cursor: pointer; }
 
         .header-actions { display: flex; align-items: center; gap: 10px; }
-        .create-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-        body.admin-mode .create-btn { background: linear-gradient(45deg, #000, var(--admin-gold)); color: #000; }
+        .create-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; text-decoration: none; }
+        .wiki-btn { background: #262630; border: 1px solid var(--border); color: #fff; }
+        body.admin-mode .create-btn:not(.wiki-btn) { background: linear-gradient(45deg, #000, var(--admin-gold)); color: #000; }
         .profile-badge { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(45deg, #00c6ff, #0072ff); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; position: relative; }
         body.admin-mode .profile-badge { background: linear-gradient(45deg, var(--admin-gold), #ffaa00); color: #000; box-shadow: 0 0 10px var(--admin-gold); }
 
@@ -166,8 +167,11 @@
                 <button>🔍</button>
             </div>
             <div class="header-actions">
+                <!-- WIKI LINK IN HEADER FOR MOBILE/DESKTOP -->
+                <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="create-btn wiki-btn">📖 <span>Our Wiki</span></a>
+                
                 <button class="create-btn" onclick="openModal('uploadModal')">➕ <span>Create</span></button>
-                <div class="profile-badge" id="myAvatar" onclick="logout()">U</div>
+                <div class="profile-badge" id="myAvatar" onclick="logout()" title="Log Out">U</div>
             </div>
         </header>
 
@@ -178,7 +182,11 @@
                 <div class="side-link" id="side-reels" onclick="switchTab('reels')">📱 <span>Reels</span></div>
                 <div class="side-link" id="side-feed" onclick="switchTab('feed')">📸 <span>Social Feed</span></div>
                 <div class="side-link admin-link" id="side-admin" onclick="switchTab('admin')">👑 <span>Admin Panel</span></div>
+                
                 <div style="height: 1px; background: var(--border); margin: 10px 0;"></div>
+                
+                <!-- WIKI LINK IN SIDEBAR -->
+                <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="side-link" style="color: var(--text-main);">📖 <span>Our Wiki</span></a>
                 <div class="side-link" onclick="logout()" style="color: #ff4444;">🚪 <span>Log Out</span></div>
             </aside>
 
@@ -254,7 +262,6 @@
 
     <script>
         // --- 1. EMPTY DATABASE SYSTEM ---
-        // Initialize entirely empty database. No fake AI channels.
         let db = JSON.parse(localStorage.getItem('flix_db_v2')) || {
             users: [],
             videos: [],
@@ -331,7 +338,7 @@
             if(confirm("Are you sure you want to log out?")) {
                 currentUser = null;
                 saveDb();
-                location.reload(); // Reload to show auth screen
+                location.reload(); 
             }
         }
 
@@ -470,7 +477,7 @@
             });
         }
 
-        // --- 5. ADMIN CONTROLS (SEE EVERYONE) ---
+        // --- 5. ADMIN CONTROLS ---
         function renderAdminUsers() {
             const list = document.getElementById('adminUserList');
             list.innerHTML = '';
