@@ -129,6 +129,10 @@
             .search-bar { display: none; }
         }
     </style>
+    
+    <!-- FIREBASE CLOUD DATABASE SDKS -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -167,9 +171,7 @@
                 <button>🔍</button>
             </div>
             <div class="header-actions">
-                <!-- WIKI LINK IN HEADER FOR MOBILE/DESKTOP -->
                 <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="create-btn wiki-btn">📖 <span>Our Wiki</span></a>
-                
                 <button class="create-btn" onclick="openModal('uploadModal')">➕ <span>Create</span></button>
                 <div class="profile-badge" id="myAvatar" onclick="logout()" title="Log Out">U</div>
             </div>
@@ -185,7 +187,6 @@
                 
                 <div style="height: 1px; background: var(--border); margin: 10px 0;"></div>
                 
-                <!-- WIKI LINK IN SIDEBAR -->
                 <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="side-link" style="color: var(--text-main);">📖 <span>Our Wiki</span></a>
                 <div class="side-link" onclick="logout()" style="color: #ff4444;">🚪 <span>Log Out</span></div>
             </aside>
@@ -264,28 +265,50 @@
     </div>
 
     <script>
-        // --- 1. EMPTY DATABASE SYSTEM ---
-        let db = JSON.parse(localStorage.getItem('flix_db_v2')) || {
-            users: [],
-            videos: [],
-            reels: [],
-            posts: [],
-            stories: []
+        // --- 1. FIREBASE SETUP & CONNECTION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBF-TU2fwc7lR2M8wFfKpJvSYNiLz3Xinw",
+            authDomain: "flix-r11121117.firebaseapp.com",
+            projectId: "flix-r11121117",
+            storageBucket: "flix-r11121117.firebasestorage.app",
+            messagingSenderId: "278303851580",
+            appId: "1:278303851580:web:b185040ce65eae24ac2f39"
         };
-        let currentUser = JSON.parse(localStorage.getItem('flix_currentUser_v2')) || null;
+        
+        firebase.initializeApp(firebaseConfig);
+        const firestore = firebase.firestore();
+        const dbRef = firestore.collection("flix_data").doc("main_database");
 
-        function saveDb() {
-            try {
-                localStorage.setItem('flix_db_v2', JSON.stringify(db));
-                localStorage.setItem('flix_currentUser_v2', JSON.stringify(currentUser));
-            } catch (e) {
-                if (e.name === "QuotaExceededError") {
-                    alert("Storage limit exceeded! The video file is too large for local storage caching. Please upload a smaller file or clear your browser data.");
+        // --- 2. CLOUD DATABASE SYSTEM ---
+        let db = { users: [], videos: [], reels: [], posts: [], stories: [] };
+        
+        // We still keep the login session local so your phone remembers YOU are logged in.
+        let currentUser = JSON.parse(localStorage.getItem('flix_currentUser_v3')) || null;
+
+        // REAL-TIME CLOUD LISTENER: This magic code updates your screen instantly when someone else posts!
+        dbRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                db = doc.data();
+                if (currentUser) {
+                    renderAll();
+                    if (currentUser.role === 'admin') renderAdminUsers();
                 }
+            }
+        });
+
+        async function saveDb() {
+            try {
+                // Save everything to the Firebase Cloud
+                await dbRef.set(db);
+                // Save your personal login state locally
+                localStorage.setItem('flix_currentUser_v3', JSON.stringify(currentUser));
+            } catch (e) {
+                console.error(e);
+                alert("Upload Failed! Firestore has a 1MB limit for databases. Your video file might be too large. Try uploading just text/colors or a very tiny video file for now!");
             }
         }
 
-        // --- 2. AUTHENTICATION & SECRET ADMIN LOGIN ---
+        // --- 3. AUTHENTICATION & SECRET ADMIN LOGIN ---
         function switchAuth(mode) {
             document.getElementById('tabLogin').classList.remove('active');
             document.getElementById('tabSignup').classList.remove('active');
@@ -346,12 +369,12 @@
         function logout() {
             if(confirm("Are you sure you want to log out?")) {
                 currentUser = null;
-                saveDb();
+                localStorage.removeItem('flix_currentUser_v3');
                 location.reload(); 
             }
         }
 
-        // --- 3. APP INITIALIZATION & UI RENDERING ---
+        // --- 4. APP INITIALIZATION & UI RENDERING ---
         function initApp() {
             if(!currentUser) {
                 document.getElementById('authScreen').style.display = 'flex';
@@ -394,7 +417,7 @@
             }
         }
 
-        // --- 4. RENDER CONTENT ---
+        // --- 5. RENDER CONTENT ---
         function getAvatar(name) { return name === 'The Developer' ? '👑' : name.charAt(0).toUpperCase(); }
         function getBadge(isWorldwide) { return isWorldwide ? `<span class="admin-badge">WORLDWIDE</span>` : ''; }
 
@@ -498,7 +521,7 @@
             });
         }
 
-        // --- 5. ADMIN CONTROLS ---
+        // --- 6. ADMIN CONTROLS ---
         function renderAdminUsers() {
             const list = document.getElementById('adminUserList');
             list.innerHTML = '';
@@ -525,7 +548,7 @@
             renderAdminUsers();
         }
 
-        // --- 6. UPLOAD / PUBLISH LOGIC ---
+        // --- 7. UPLOAD / PUBLISH LOGIC ---
         function handlePublish() {
             const type = document.getElementById('upType').value;
             const title = document.getElementById('upTitle').value || "New Post";
@@ -538,7 +561,7 @@
                 reader.onload = function(e) {
                     finalizePublish(type, title, isWorldwide, e.target.result);
                 };
-                reader.readAsDataURL(file); // Convert video to base64 string
+                reader.readAsDataURL(file);
             } else {
                 finalizePublish(type, title, isWorldwide, null);
             }
@@ -555,7 +578,7 @@
                 caption: title,
                 bg: randomBg,
                 isWorldwide: isWorldwide,
-                videoData: videoData // Storing the base64 video string
+                videoData: videoData
             };
 
             if(type === 'video') { db.videos.unshift(item); switchTab('home'); }
@@ -564,7 +587,6 @@
             else if(type === 'story') { db.stories.unshift(item); }
 
             saveDb();
-            renderAll();
             closeModal('uploadModal');
             document.getElementById('upTitle').value = '';
             document.getElementById('upFile').value = '';
@@ -575,8 +597,15 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Start
-        initApp();
+        // Start App
+        // Read from DB right away to initialize
+        dbRef.get().then((doc) => {
+            if (doc.exists) { db = doc.data(); }
+            initApp();
+        }).catch(() => {
+            initApp(); // fallback if empty
+        });
+
     </script>
 </body>
 </html>
