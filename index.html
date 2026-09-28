@@ -3,105 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flix - The Ultimate Video Platform</title>
+    <title>Flix.com - The Ultimate Video & Social Platform</title>
     <style>
         /* Base Styles & Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f0f0f; color: #f1f1f1; overflow-x: hidden; }
+        body { background-color: #0a0a0a; color: #f1f1f1; overflow-x: hidden; }
         
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
 
         /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 60px; background-color: #0f0f0f; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
-        .logo { font-size: 26px; font-weight: 900; background: linear-gradient(45deg, #ff0055, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -1px; text-transform: uppercase; }
-        .search-bar { display: flex; flex: 0 1 500px; align-items: center; }
-        .search-bar input { width: 100%; padding: 10px 16px; background-color: #121212; border: 1px solid #303030; border-radius: 20px 0 0 20px; color: white; outline: none; }
-        .search-bar button { padding: 10px 20px; background-color: #222222; border: 1px solid #303030; border-left: none; border-radius: 0 20px 20px 0; color: white; cursor: pointer; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; background-color: #0f0f0f; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
+        .logo { font-size: 28px; font-weight: 900; background: linear-gradient(45deg, #ff0055, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -1px; text-transform: uppercase; }
+        .search-bar { display: flex; flex: 0 1 500px; align-items: center; margin: 0 20px; }
+        .search-bar input { width: 100%; padding: 10px 16px; background-color: #121212; border: 1px solid #303030; border-radius: 20px 0 0 20px; color: white; outline: none; transition: border 0.3s; }
+        .search-bar input:focus { border-color: #555; }
+        .search-bar button { padding: 10px 20px; background-color: #222; border: 1px solid #303030; border-left: none; border-radius: 0 20px 20px 0; color: white; cursor: pointer; transition: background 0.2s; }
+        .search-bar button:hover { background-color: #333; }
         
         /* Header Icons & Auth */
         .header-icons { display: flex; align-items: center; gap: 16px; }
-        .icon-btn { background: #222; border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .icon-btn:hover { background: #333; }
-        .upload-btn { background-color: #3aa1f2; color: black; border: none; padding: 8px 16px; border-radius: 18px; cursor: pointer; font-weight: bold; }
+        .icon-btn { background: #222; border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
+        .icon-btn:hover { background: #333; transform: scale(1.05); }
+        .upload-btn { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+        .upload-btn:hover { opacity: 0.9; }
         .auth-buttons { display: flex; gap: 10px; }
-        .auth-btn { padding: 8px 16px; border-radius: 18px; cursor: pointer; font-weight: bold; border: none; }
-        .login-btn { background: transparent; color: #3aa1f2; border: 1px solid #3aa1f2; }
-        .signup-btn { background: #3aa1f2; color: black; }
-        .profile-pic { width: 36px; height: 36px; border-radius: 50%; background-color: #ff0055; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .auth-btn { padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; border: none; transition: 0.2s; }
+        .login-btn { background: transparent; color: #ffaa00; border: 1px solid #ffaa00; }
+        .login-btn:hover { background: rgba(255, 170, 0, 0.1); }
+        .signup-btn { background: #ffaa00; color: black; }
+        .signup-btn:hover { background: #e69900; }
+        .profile-pic { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(45deg, #3aa1f2, #8a2387); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; cursor: pointer; text-transform: uppercase; border: 2px solid #222; }
 
         /* Layout */
-        .container { display: flex; height: calc(100vh - 60px); }
-        .sidebar { width: 240px; background-color: #0f0f0f; padding: 12px; overflow-y: auto; border-right: 1px solid #222; }
-        .sidebar-item { padding: 10px 12px; border-radius: 10px; cursor: pointer; margin-bottom: 4px; font-size: 14px; display: flex; gap: 12px; align-items: center; }
-        .sidebar-item:hover { background-color: #272727; }
-        .sidebar-item.active { background-color: #303030; font-weight: bold; }
-        .sidebar-divider { height: 1px; background-color: #303030; margin: 12px 0; }
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; position: relative; }
+        .container { display: flex; height: calc(100vh - 64px); }
+        .sidebar { width: 240px; background-color: #0f0f0f; padding: 16px 12px; overflow-y: auto; border-right: 1px solid #222; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-item { padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 15px; display: flex; gap: 14px; align-items: center; transition: 0.2s; color: #ddd; }
+        .sidebar-item:hover { background-color: #222; color: white; }
+        .sidebar-item.active { background-color: #303030; font-weight: bold; color: white; }
+        .sidebar-divider { height: 1px; background-color: #222; margin: 12px 0; }
+        
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; position: relative; background-color: #0a0a0a; }
 
         /* Stories (Instagram Style) */
-        .stories-container { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #222; }
-        .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-width: 70px; }
-        .story-ring { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; display: flex; align-items: center; justify-content: center; }
-        .story-inner { width: 100%; height: 100%; background-color: #222; border-radius: 50%; border: 2px solid #0f0f0f; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-        .story-item span { font-size: 12px; color: #ccc; }
+        .stories-container { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid #222; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; min-width: 76px; }
+        .story-ring { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        .story-item:hover .story-ring { transform: scale(1.05); }
+        .story-inner { width: 100%; height: 100%; background-color: #111; border-radius: 50%; border: 3px solid #0a0a0a; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; color: white; }
+        .story-item span { font-size: 12px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
 
-        /* Video Grids */
-        .video-section-title { margin: 10px 0 16px 0; font-size: 20px; font-weight: bold; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .video-card { cursor: pointer; transition: transform 0.2s; }
-        .video-card:hover { transform: scale(1.02); }
-        .thumbnail { width: 100%; aspect-ratio: 16/9; background-color: #303030; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; position: relative; background-size: cover; background-position: center; }
-        .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        /* View Sections */
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { margin: 10px 0 20px 0; font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+
+        /* Video Grids (Home) */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .video-card { cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; gap: 12px; }
+        .video-card:hover { transform: scale(1.03); }
+        .thumbnail { width: 100%; aspect-ratio: 16/9; background-color: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0,0,0,0.8); color: white; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .video-info { display: flex; gap: 12px; }
+        .video-avatar { width: 36px; height: 36px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
         
-        /* Shorts Grid */
-        .shorts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 40px; }
-        .short-card { cursor: pointer; transition: transform 0.2s; }
+        /* Shorts Grid (Reels) */
+        .shorts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .short-card { cursor: pointer; transition: transform 0.2s; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .short-card:hover { transform: scale(1.05); }
-        .short-thumbnail { width: 100%; aspect-ratio: 9/16; background-color: #303030; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; text-align: center; padding: 10px; position: relative; background-size: cover; background-position: center; }
+        .short-thumbnail { width: 100%; aspect-ratio: 9/16; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; position: relative; }
+        .short-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 40%); z-index: 1; }
+        .short-info { position: relative; z-index: 2; }
+        .short-info strong { display: block; margin-bottom: 4px; font-size: 15px; }
+        .short-info span { color: #ddd; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+        /* Social Feed (Instagram Posts) */
+        .feed-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+        .post-card { background: #0f0f0f; border: 1px solid #222; border-radius: 16px; overflow: hidden; }
+        .post-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+        .post-header .video-avatar { width: 32px; height: 32px; }
+        .post-header strong { font-size: 14px; }
+        .post-media { width: 100%; aspect-ratio: 4/5; background: #222; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .post-actions { padding: 12px 16px; display: flex; gap: 16px; border-top: 1px solid #1a1a1a; }
+        .post-actions i { font-style: normal; font-size: 22px; cursor: pointer; transition: 0.2s; }
+        .post-actions i:hover { transform: scale(1.1); color: #ff0055; }
+        .post-content { padding: 0 16px 16px 16px; }
+        .post-likes { font-weight: bold; font-size: 14px; margin-bottom: 6px; display: block; }
+        .post-caption { font-size: 14px; line-height: 1.4; }
 
         /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background-color: #212121; width: 400px; border-radius: 12px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
-        .modal.player-modal { width: 900px; }
-        .modal.short-player { width: 450px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #303030; padding-bottom: 12px; }
-        .close-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal { background-color: #1a1a1a; width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; border: 1px solid #333; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header h2 { font-size: 20px; }
+        .close-btn { background: none; border: none; color: #888; font-size: 28px; cursor: pointer; transition: 0.2s; line-height: 1; }
+        .close-btn:hover { color: white; }
         
-        /* Auth & Forms */
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #aaaaaa; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: #121212; border: 1px solid #303030; border-radius: 6px; color: white; outline: none; }
-        .submit-btn { background-color: #3aa1f2; color: black; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 16px; }
-        .auth-switch { text-align: center; margin-top: 15px; font-size: 13px; color: #aaa; }
-        .auth-switch span { color: #3aa1f2; cursor: pointer; font-weight: bold; }
+        /* Forms */
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; color: #aaa; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; background-color: #0a0a0a; border: 1px solid #333; border-radius: 8px; color: white; outline: none; transition: 0.2s; resize: vertical; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #ffaa00; background-color: #111; }
+        .submit-btn { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: opacity 0.2s; }
+        .submit-btn:hover { opacity: 0.9; }
+        .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: #aaa; }
+        .auth-switch span { color: #ffaa00; cursor: pointer; font-weight: bold; }
 
         /* Chat Sidebar */
-        .chat-sidebar { position: fixed; top: 60px; right: -350px; width: 350px; height: calc(100vh - 60px); background: #121212; border-left: 1px solid #222; transition: right 0.3s ease; z-index: 90; display: flex; flex-direction: column; }
+        .chat-sidebar { position: fixed; top: 64px; right: -380px; width: 380px; height: calc(100vh - 64px); background: #0f0f0f; border-left: 1px solid #222; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 90; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
         .chat-sidebar.open { right: 0; }
-        .chat-header { padding: 16px; border-bottom: 1px solid #222; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .chat-header select { width: 100%; margin-top: 8px; padding: 8px; background: #222; color: white; border: 1px solid #333; border-radius: 6px; outline: none; }
-        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; }
-        .msg.received { background: #333; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg.sent { background: #3aa1f2; color: black; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .chat-input { padding: 16px; border-top: 1px solid #222; display: flex; gap: 8px; }
-        .chat-input input { flex: 1; padding: 10px; border-radius: 20px; border: none; background: #222; color: white; outline: none; }
-        .chat-input button { background: #3aa1f2; color: black; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .chat-header { padding: 20px; border-bottom: 1px solid #222; font-weight: bold; font-size: 16px; display: flex; flex-direction: column; gap: 12px; background: #151515; }
+        .chat-header-top { display: flex; justify-content: space-between; align-items: center; }
+        .chat-header select { width: 100%; padding: 10px; background: #0a0a0a; color: white; border: 1px solid #333; border-radius: 8px; outline: none; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #0a0a0a; }
+        .msg { max-width: 75%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4; word-wrap: break-word; position: relative; }
+        .msg.received { background: #222; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg.sent { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-input { padding: 16px 20px; border-top: 1px solid #222; display: flex; gap: 10px; background: #151515; }
+        .chat-input input { flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid #333; background: #0a0a0a; color: white; outline: none; }
+        .chat-input button { background: #ffaa00; color: black; border: none; padding: 0 20px; border-radius: 24px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .chat-input button:hover { background: #e69900; }
 
         /* Video Call Screen */
-        .call-screen { background: #111; text-align: center; padding: 40px 20px; }
-        .caller-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(45deg, #00f2fe, #4facfe); margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; animation: pulse 1.5s infinite; }
-        .call-buttons { display: flex; justify-content: center; gap: 20px; margin-top: 40px; }
-        .call-btn { width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; font-size: 24px; color: white; }
-        .call-btn.accept { background: #25D366; }
-        .call-btn.decline { background: #ff3b30; }
+        .call-screen { background: #0a0a0a; text-align: center; padding: 40px 20px; }
+        .caller-avatar { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(45deg, #ff0055, #ffaa00); margin: 0 auto 30px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; animation: pulse 2s infinite; border: 4px solid #222; }
+        .call-buttons { display: flex; justify-content: center; gap: 30px; margin-top: 50px; }
+        .call-btn { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; font-size: 28px; color: white; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .call-btn:hover { transform: scale(1.1); }
+        .call-btn.accept { background: #25D366; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
+        .call-btn.decline { background: #ff3b30; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4); }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(79, 172, 254, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(79, 172, 254, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(79, 172, 254, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+            70% { box-shadow: 0 0 0 25px rgba(255, 0, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
         }
     </style>
 </head>
@@ -109,15 +148,15 @@
 
     <!-- Top Navigation -->
     <header>
-        <a href="#" class="logo">FLIX</a>
+        <a href="#" class="logo" onclick="switchTab('home')">FLIX.COM</a>
         <div class="search-bar">
-            <input type="text" placeholder="Search accounts, videos, tags...">
+            <input type="text" placeholder="Search accounts, videos, reels, tags...">
             <button>Search</button>
         </div>
         <div class="header-icons">
             <button class="icon-btn" id="callBtn" onclick="openCallSetup()" style="display:none;" title="Video Call">📞</button>
             <button class="icon-btn" id="chatBtn" onclick="toggleChat()" style="display:none;" title="Messages">💬</button>
-            <button class="upload-btn" id="uploadBtn" onclick="openModal('uploadModal')" style="display:none;">+ Upload</button>
+            <button class="upload-btn" id="uploadBtn" onclick="openModal('uploadModal')" style="display:none;">+ Create</button>
             <div class="profile-pic" id="profilePic" onclick="logout()" style="display:none;" title="Click to Logout">U</div>
             
             <div class="auth-buttons" id="authButtons">
@@ -130,66 +169,73 @@
     <div class="container">
         <!-- Sidebar Navigation -->
         <div class="sidebar">
-            <div class="sidebar-item active" onclick="switchTab('home')">🏠 Home</div>
-            <div class="sidebar-item" onclick="switchTab('shorts')">⚡ Shorts</div>
+            <div class="sidebar-item active" id="tab-home" onclick="switchTab('home')">🏠 Home</div>
+            <div class="sidebar-item" id="tab-reels" onclick="switchTab('reels')">📱 Reels</div>
+            <div class="sidebar-item" id="tab-feed" onclick="switchTab('feed')">📸 Social Feed</div>
             <div class="sidebar-divider"></div>
-            <div class="sidebar-item">📚 Library</div>
-            <div class="sidebar-item" onclick="alert('Please login to view History')">⏱️ History</div>
-            <div class="sidebar-item" onclick="alert('Please login to view Liked Videos')">👍 Liked Videos</div>
+            <div class="sidebar-item" onclick="alert('Library requires premium features.')">📚 Library</div>
+            <div class="sidebar-item" onclick="alert('History is synced in the cloud.')">⏱️ History</div>
+            <div class="sidebar-item" onclick="alert('Liked content saved.')">❤️ Liked</div>
             <div class="sidebar-divider"></div>
-            <div class="sidebar-item" style="color: #888; font-size: 12px; cursor: default;">
-                <strong>Ranks:</strong><br>
-                • Bronze: 10k views<br>
-                • Silver: 50k views<br>
-                • Gold: 100k views
+            <div class="sidebar-item" style="color: #666; font-size: 12px; cursor: default; flex-direction: column; align-items: flex-start; gap: 6px;">
+                <strong>FLIX.COM CREATOR RANKS</strong>
+                <span>⭐ Rising: 1k followers</span>
+                <span>🔥 Pro: 10k followers</span>
+                <span>👑 Icon: 100k followers</span>
             </div>
         </div>
 
         <!-- Main Content Area -->
         <div class="main-content">
-            <!-- Instagram Style Stories -->
+            <!-- Instagram Style Stories (Visible across all tabs but separate logic can apply) -->
             <div class="stories-container" id="storiesContainer"></div>
 
-            <!-- Long Videos Section -->
-            <div id="longVideosSection">
-                <div class="video-section-title">Recommended Videos</div>
+            <!-- Home Tab (YouTube Style) -->
+            <div id="homeSection" class="view-section active">
+                <div class="section-title">▶️ Recommended For You</div>
                 <div class="video-grid" id="longVideosGrid"></div>
             </div>
 
-            <!-- Shorts Section -->
-            <div id="shortsVideosSection">
-                <div class="video-section-title">⚡ Trending Shorts</div>
+            <!-- Reels Tab (Shorts/TikTok Style) -->
+            <div id="reelsSection" class="view-section">
+                <div class="section-title">📱 Trending Reels</div>
                 <div class="shorts-grid" id="shortsGrid"></div>
+            </div>
+
+            <!-- Social Feed Tab (Instagram Style) -->
+            <div id="feedSection" class="view-section">
+                <div class="section-title" style="justify-content: center;">📸 Recent Posts</div>
+                <div class="feed-container" id="feedContainer"></div>
             </div>
         </div>
 
         <!-- Right Side Chat Panel -->
         <div class="chat-sidebar" id="chatSidebar">
             <div class="chat-header">
-                <div style="flex:1;">
-                    Direct Messages
-                    <select id="chatUserSelect" onchange="loadChat()">
-                        <option value="">Select a user to chat...</option>
-                    </select>
+                <div class="chat-header-top">
+                    <span>Direct Messages</span>
+                    <button class="close-btn" style="font-size: 20px;" onclick="toggleChat()">✕</button>
                 </div>
-                <button style="background:none; border:none; color:white; cursor:pointer; font-size:16px; margin-left:10px;" onclick="toggleChat()">✖</button>
+                <select id="chatUserSelect" onchange="loadChat()">
+                    <option value="">Select a user to chat...</option>
+                </select>
             </div>
             <div class="chat-messages" id="chatMessages">
-                <div style="color:#aaa; text-align:center; margin-top:20px;">Select a user to start chatting!</div>
+                <div style="color:#666; text-align:center; margin-top:40px;">Select a user to start chatting!</div>
             </div>
             <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Message..." onkeypress="if(event.key === 'Enter') sendMsg()">
+                <input type="text" id="chatInput" placeholder="Message @user..." onkeypress="if(event.key === 'Enter') sendMsg()">
                 <button onclick="sendMsg()">Send</button>
             </div>
         </div>
     </div>
 
-    <!-- Auth Modal (Login/Signup) -->
+    <!-- Auth Modal -->
     <div class="modal-overlay" id="authModal">
         <div class="modal">
             <div class="modal-header">
                 <h2 id="authTitle">Create Account</h2>
-                <button class="close-btn" onclick="closeModal('authModal')">×</button>
+                <button class="close-btn" onclick="closeModal('authModal')">✕</button>
             </div>
             <div class="form-group">
                 <label>Username</label>
@@ -206,13 +252,42 @@
         </div>
     </div>
 
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <button class="close-btn" onclick="closeModal('uploadModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label>Post Type</label>
+                <select id="uploadType">
+                    <option value="video">Long Video (Home)</option>
+                    <option value="reel">Reel / Short</option>
+                    <option value="post">Social Post (Feed)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title / Caption</label>
+                <textarea id="uploadTitle" rows="3" placeholder="Write a catchy caption or title..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Media File</label>
+                <div style="padding: 20px; border: 2px dashed #444; border-radius: 8px; text-align: center; color: #888; cursor: pointer; transition: 0.2s;" onclick="alert('File explorer mock opened!')">
+                    Click to browse files (Simulated)
+                </div>
+            </div>
+            <button class="submit-btn" onclick="handleUpload()">Publish</button>
+        </div>
+    </div>
+
     <!-- Video Call Setup Modal -->
     <div class="modal-overlay" id="callModal">
         <!-- State 1: Select User -->
         <div class="modal" id="callSetupScreen">
             <div class="modal-header">
                 <h2>Start Video Call</h2>
-                <button class="close-btn" onclick="closeModal('callModal')">×</button>
+                <button class="close-btn" onclick="closeModal('callModal')">✕</button>
             </div>
             <div class="form-group">
                 <label>Select User to Call</label>
@@ -220,35 +295,58 @@
                     <option value="">Select a user...</option>
                 </select>
             </div>
-            <button class="submit-btn" style="background:#25D366; color:white;" onclick="startCallRinging()">Call Now</button>
+            <button class="submit-btn" style="background: linear-gradient(45deg, #128C7E, #25D366);" onclick="startCallRinging()">Call Now</button>
         </div>
         
         <!-- State 2: Ringing Screen -->
         <div class="modal call-screen" id="callRingingScreen" style="display:none;">
-            <h3 style="color:#aaa; margin-bottom:30px;">Calling...</h3>
+            <h3 style="color:#aaa; margin-bottom:30px; letter-spacing: 2px; text-transform: uppercase; font-size: 14px;">Calling...</h3>
             <div class="caller-avatar" id="callingAvatar">U</div>
-            <h2 id="callingName">Username</h2>
+            <h2 id="callingName" style="font-size: 24px; margin-bottom: 8px;">@Username</h2>
+            <p style="color: #888; font-size: 14px;">Flix Secure Encrypted Call</p>
             <div class="call-buttons">
-                <button class="call-btn decline" onclick="closeModal('callModal')" title="End Call">✖</button>
+                <button class="call-btn decline" onclick="closeModal('callModal')" title="End Call">✕</button>
+                <button class="call-btn accept" onclick="alert('User is unavailable.'); closeModal('callModal')" title="Accept Dummy">📞</button>
             </div>
         </div>
     </div>
 
     <!-- Script Block -->
     <script>
-        // --- 1. LOCAL STORAGE DATABASE (Users & Chats) ---
+        // --- 1. LOCAL STORAGE DATABASE ---
         let users = JSON.parse(localStorage.getItem('flix_users')) || [];
         let currentUser = JSON.parse(localStorage.getItem('flix_currentUser')) || null;
         let chats = JSON.parse(localStorage.getItem('flix_chats')) || {};
+        
+        // Content Database
+        let contentDb = JSON.parse(localStorage.getItem('flix_content')) || {
+            stories: ['FlixOfficial', 'AI_Genius', 'CyberPunk'],
+            videos: [
+                { id: 'v1', author: 'AI_Genius', title: 'The Future of Web UI Design in 2027', views: 125000, bg: 'linear-gradient(135deg, #00c6ff, #0072ff)' },
+                { id: 'v2', author: 'FlixOfficial', title: 'Welcome to Flix.com - Tour', views: 980000, bg: 'linear-gradient(135deg, #f12711, #f5af19)' },
+            ],
+            reels: [
+                { id: 'r1', author: 'CyberPunk', title: 'Neon city aesthetic vibes 🌃✨', views: 450000, bg: 'linear-gradient(to bottom, #8A2387, #E94057, #F27121)' },
+                { id: 'r2', author: 'AI_Genius', title: 'Coding speedrun #shorts', views: 1200000, bg: 'linear-gradient(to bottom, #11998e, #38ef7d)' },
+                { id: 'r3', author: 'Creator123', title: 'Morning coffee art ☕', views: 85000, bg: 'linear-gradient(to bottom, #C6FFDD, #FBD786, #f7797d)' },
+            ],
+            posts: [
+                { id: 'p1', author: 'FlixOfficial', caption: 'We just launched the new Feed tab! What do you guys think? Let us know in the comments below! 👇🚀 #FlixLaunch', likes: 12400, bg: 'linear-gradient(45deg, #12c2e9, #c471ed, #f64f59)' },
+                { id: 'p2', author: 'CyberPunk', caption: 'Setup looking clean today. Ready for the weekend stream. 🎮', likes: 890, bg: 'linear-gradient(45deg, #0f2027, #203a43, #2c5364)' }
+            ]
+        };
 
-        // Seed database with dummy accounts if empty so you have someone to talk to!
         if(users.length === 0) {
             users = [
+                {username: 'FlixOfficial', password: '123'},
                 {username: 'AI_Genius', password: '123'},
-                {username: 'SpaceSim', password: '123'},
-                {username: 'ShortsAI', password: '123'}
+                {username: 'CyberPunk', password: '123'}
             ];
             localStorage.setItem('flix_users', JSON.stringify(users));
+        }
+
+        function saveContent() {
+            localStorage.setItem('flix_content', JSON.stringify(contentDb));
         }
 
         // --- 2. AUTHENTICATION ---
@@ -276,10 +374,14 @@
                 users.push({ username: user, password: pass });
                 localStorage.setItem('flix_users', JSON.stringify(users));
                 currentUser = user;
-                alert("Account created!");
+                // Add user to stories
+                if(!contentDb.stories.includes(user)) {
+                    contentDb.stories.push(user);
+                    saveContent();
+                }
             } else {
                 const found = users.find(u => u.username === user && u.password === pass);
-                if(found) { currentUser = user; alert("Logged in!"); }
+                if(found) { currentUser = user; }
                 else { alert("Invalid username or password."); return; }
             }
 
@@ -288,6 +390,7 @@
             document.getElementById('authUsername').value = '';
             document.getElementById('authPassword').value = '';
             updateAuthUI();
+            renderUI();
         }
 
         function logout() {
@@ -295,6 +398,7 @@
                 currentUser = null;
                 localStorage.removeItem('flix_currentUser');
                 updateAuthUI();
+                renderUI();
             }
         }
 
@@ -307,7 +411,7 @@
                 const pic = document.getElementById('profilePic');
                 pic.style.display = 'flex';
                 pic.innerText = currentUser.charAt(0);
-                populateContacts(); // Populate dropdowns with other registered users
+                populateContacts(); 
             } else {
                 document.getElementById('authButtons').style.display = 'flex';
                 document.getElementById('callBtn').style.display = 'none';
@@ -318,30 +422,158 @@
             }
         }
 
-        // --- 3. POPULATE DROPDOWNS (Real Users) ---
+        // --- 3. CORE UI & UPLOAD LOGIC ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`${tabName}Section`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function handleUpload() {
+            if(!currentUser) { alert("Please log in first!"); return; }
+            
+            const type = document.getElementById('uploadType').value;
+            const title = document.getElementById('uploadTitle').value.trim();
+            if(!title) { alert("Please enter a caption or title!"); return; }
+
+            // Generate a random gradient for the mock media
+            const colors = ['#ff0055', '#ffaa00', '#00c6ff', '#0072ff', '#8A2387', '#E94057', '#11998e', '#38ef7d'];
+            const c1 = colors[Math.floor(Math.random()*colors.length)];
+            const c2 = colors[Math.floor(Math.random()*colors.length)];
+            const bg = `linear-gradient(${Math.floor(Math.random()*360)}deg, ${c1}, ${c2})`;
+
+            const newItem = {
+                id: Date.now().toString(),
+                author: currentUser,
+                bg: bg,
+                views: 0,
+                likes: 0
+            };
+
+            if(type === 'video') {
+                newItem.title = title;
+                contentDb.videos.unshift(newItem); // Add to beginning
+                switchTab('home');
+            } else if(type === 'reel') {
+                newItem.title = title;
+                contentDb.reels.unshift(newItem);
+                switchTab('reels');
+            } else if(type === 'post') {
+                newItem.caption = title;
+                contentDb.posts.unshift(newItem);
+                switchTab('feed');
+            }
+
+            saveContent();
+            renderUI();
+            closeModal('uploadModal');
+            document.getElementById('uploadTitle').value = '';
+        }
+
+        function renderUI() {
+            // Render Stories
+            const storiesDiv = document.getElementById('storiesContainer');
+            storiesDiv.innerHTML = '';
+            if(currentUser) {
+                storiesDiv.innerHTML += `
+                    <div class="story-item" onclick="openModal('uploadModal')">
+                        <div class="story-ring" style="background:#444;">
+                            <div class="story-inner" style="background:#222; border-color:#0a0a0a;">+</div>
+                        </div>
+                        <span>Your Story</span>
+                    </div>`;
+            }
+            contentDb.stories.forEach(s => {
+                storiesDiv.innerHTML += `
+                    <div class="story-item">
+                        <div class="story-ring">
+                            <div class="story-inner">${s.charAt(0).toUpperCase()}</div>
+                        </div>
+                        <span>${s}</span>
+                    </div>`;
+            });
+
+            // Render Home Videos
+            const longGrid = document.getElementById('longVideosGrid');
+            longGrid.innerHTML = '';
+            contentDb.videos.forEach(v => {
+                longGrid.innerHTML += `
+                    <div class="video-card">
+                        <div class="thumbnail" style="background:${v.bg}">▶️<span class="duration">10:00</span></div>
+                        <div class="video-info">
+                            <div class="video-avatar">${v.author.charAt(0).toUpperCase()}</div>
+                            <div>
+                                <strong style="font-size:15px; line-height:1.2; display:block; margin-bottom:4px;">${v.title}</strong>
+                                <span style="color:#aaa;font-size:13px;">@${v.author} • ${(v.views/1000).toFixed(1)}K views</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            // Render Reels
+            const shortsGrid = document.getElementById('shortsGrid');
+            shortsGrid.innerHTML = '';
+            contentDb.reels.forEach(s => {
+                shortsGrid.innerHTML += `
+                    <div class="short-card">
+                        <div class="short-thumbnail" style="background:${s.bg}">
+                            <div class="short-overlay"></div>
+                            <div class="short-info">
+                                <strong>${s.title}</strong>
+                                <span>@${s.author} • ${(s.views/1000).toFixed(1)}K views</span>
+                            </div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 30px; opacity: 0.8;">▶️</div>
+                        </div>
+                    </div>`;
+            });
+
+            // Render Feed Posts
+            const feedContainer = document.getElementById('feedContainer');
+            feedContainer.innerHTML = '';
+            contentDb.posts.forEach(p => {
+                feedContainer.innerHTML += `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="video-avatar">${p.author.charAt(0).toUpperCase()}</div>
+                            <strong>${p.author}</strong>
+                            <span style="margin-left:auto; color:#888; font-size:18px; cursor:pointer;">⋮</span>
+                        </div>
+                        <div class="post-media" style="background:${p.bg}" ondblclick="alert('Liked!')">✨</div>
+                        <div class="post-actions">
+                            <i onclick="alert('Liked!')">❤️</i>
+                            <i onclick="alert('Open comments')">💬</i>
+                            <i onclick="alert('Shared!')">↗️</i>
+                            <i style="margin-left:auto;" onclick="alert('Saved to collections')">🔖</i>
+                        </div>
+                        <div class="post-content">
+                            <span class="post-likes">${p.likes.toLocaleString()} likes</span>
+                            <div class="post-caption"><strong>${p.author}</strong> ${p.caption}</div>
+                            <div style="color:#888; font-size:13px; margin-top:8px; cursor:pointer;">View all comments</div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // --- 4. REAL CHAT LOGIC ---
         function populateContacts() {
             const chatSelect = document.getElementById('chatUserSelect');
             const callSelect = document.getElementById('callUserSelect');
-            
             let optionsHTML = '<option value="">Select a user...</option>';
             users.forEach(u => {
-                // Don't list the current user to themselves
                 if(u.username !== currentUser) {
                     optionsHTML += `<option value="${u.username}">@${u.username}</option>`;
                 }
             });
-            
             chatSelect.innerHTML = optionsHTML;
             callSelect.innerHTML = optionsHTML;
         }
 
-        // --- 4. REAL CHAT LOGIC ---
-        function getChatKey(user1, user2) {
-            // Sort alphabetically so user1->user2 and user2->user1 use the same array
-            return [user1, user2].sort().join('_'); 
-        }
+        function getChatKey(user1, user2) { return [user1, user2].sort().join('_'); }
 
         function toggleChat() {
+            if(!currentUser) { alert("Please log in to chat."); return; }
             document.getElementById('chatSidebar').classList.toggle('open');
             if(document.getElementById('chatSidebar').classList.contains('open')) {
                 loadChat();
@@ -353,7 +585,7 @@
             const msgsDiv = document.getElementById('chatMessages');
             
             if(!targetUser) {
-                msgsDiv.innerHTML = '<div style="color:#aaa; text-align:center; margin-top:20px;">Select a user to start chatting!</div>';
+                msgsDiv.innerHTML = '<div style="color:#666; text-align:center; margin-top:40px;">Select a user to start chatting!</div>';
                 return;
             }
 
@@ -362,14 +594,14 @@
 
             msgsDiv.innerHTML = '';
             if(history.length === 0) {
-                msgsDiv.innerHTML = '<div style="color:#aaa; text-align:center; margin-top:20px;">No messages yet. Say hi!</div>';
+                msgsDiv.innerHTML = '<div style="color:#666; text-align:center; margin-top:40px;">No messages yet. Say hi! 👋</div>';
             } else {
                 history.forEach(msg => {
                     const isMe = msg.sender === currentUser;
                     msgsDiv.innerHTML += `<div class="msg ${isMe ? 'sent' : 'received'}">${msg.text}</div>`;
                 });
             }
-            msgsDiv.scrollTop = msgsDiv.scrollHeight; // Auto-scroll to bottom
+            msgsDiv.scrollTop = msgsDiv.scrollHeight; 
         }
 
         function sendMsg() {
@@ -377,22 +609,22 @@
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             
-            if(!targetUser) { alert('Please select a user to message from the dropdown first.'); return; }
+            if(!targetUser) { alert('Please select a user to message from the dropdown.'); return; }
             if(!text) return;
 
             const key = getChatKey(currentUser, targetUser);
             if(!chats[key]) chats[key] = [];
             
-            // Save to LocalStorage
             chats[key].push({ sender: currentUser, text: text, timestamp: Date.now() });
             localStorage.setItem('flix_chats', JSON.stringify(chats));
             
             input.value = '';
-            loadChat(); // Re-render chat box
+            loadChat();
         }
 
-        // --- 5. REAL VIDEO CALL LOGIC ---
+        // --- 5. VIDEO CALL LOGIC ---
         function openCallSetup() {
+            if(!currentUser) { alert("Please log in to make calls."); return; }
             document.getElementById('callSetupScreen').style.display = 'block';
             document.getElementById('callRingingScreen').style.display = 'none';
             openModal('callModal');
@@ -400,7 +632,7 @@
 
         function startCallRinging() {
             const target = document.getElementById('callUserSelect').value;
-            if(!target) { alert('Please select a user to call from the dropdown.'); return; }
+            if(!target) { alert('Please select a user to call.'); return; }
 
             document.getElementById('callSetupScreen').style.display = 'none';
             document.getElementById('callRingingScreen').style.display = 'block';
@@ -409,58 +641,9 @@
             document.getElementById('callingAvatar').innerText = target.charAt(0).toUpperCase();
         }
 
-        // --- 6. RENDER VIDEO FEED ---
-        let db = {
-            stories: ['AI_Genius', 'SpaceSim', 'ShortsAI', 'Glitch', 'CyberPunk'],
-            videos: [
-                { id: 'v1', type: 'long', title: 'Cyber-Cat City Tour', author: 'AI_Genius', views: 95000, bg: 'linear-gradient(45deg, #00c6ff, #0072ff)' },
-                { id: 'v2', type: 'long', title: 'Mars Base Beta', author: 'SpaceSim', views: 8000, bg: 'linear-gradient(45deg, #f12711, #f5af19)' },
-            ],
-            shorts: [
-                { id: 's1', type: 'short', title: 'Neon Bear Dance', author: 'ShortsAI', views: 450000, bg: 'linear-gradient(to bottom, #8A2387, #E94057)' },
-                { id: 's2', type: 'short', title: 'Matrix Frog', author: 'Glitch', views: 1200000, bg: 'linear-gradient(to bottom, #1f4037, #99f2c8)' },
-            ]
-        };
-
-        function renderUI() {
-            // Stories
-            const storiesDiv = document.getElementById('storiesContainer');
-            storiesDiv.innerHTML = '';
-            if(currentUser) storiesDiv.innerHTML += `<div class="story-item"><div class="story-ring" style="background:#555;"><div class="story-inner">+</div></div><span>Add</span></div>`;
-            db.stories.forEach(s => {
-                storiesDiv.innerHTML += `<div class="story-item"><div class="story-ring"><div class="story-inner">${s.charAt(0)}</div></div><span>${s}</span></div>`;
-            });
-
-            // Long Videos
-            const longGrid = document.getElementById('longVideosGrid');
-            longGrid.innerHTML = '';
-            db.videos.forEach(v => {
-                longGrid.innerHTML += `
-                    <div class="video-card">
-                        <div class="thumbnail" style="background:${v.bg}">▶️<span class="duration">10:00</span></div>
-                        <div><strong>${v.title}</strong><br><span style="color:#aaa;font-size:13px;">@${v.author} • ${(v.views/1000).toFixed(1)}K views</span></div>
-                    </div>`;
-            });
-
-            // Shorts
-            const shortsGrid = document.getElementById('shortsGrid');
-            shortsGrid.innerHTML = '';
-            db.shorts.forEach(s => {
-                shortsGrid.innerHTML += `
-                    <div class="short-card">
-                        <div class="short-thumbnail" style="background:${s.bg}">▶️</div>
-                        <div><strong>${s.title}</strong><br><span style="color:#aaa;font-size:12px;">@${s.author}</span></div>
-                    </div>`;
-            });
-        }
-
         // --- UTILS ---
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function switchTab(tabName) {
-            document.getElementById('longVideosSection').style.display = tabName === 'home' ? 'block' : 'none';
-            document.getElementById('storiesContainer').style.display = tabName === 'home' ? 'flex' : 'none';
-        }
 
         // Init App
         updateAuthUI();
