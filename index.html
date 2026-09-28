@@ -2,652 +2,651 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flix.com - The Ultimate Video & Social Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flix.com - All-in-One Social & Video</title>
     <style>
-        /* Base Styles & Reset */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0a0a0a; color: #f1f1f1; overflow-x: hidden; }
+        :root {
+            --primary: #ff0055;
+            --secondary: #ffaa00;
+            --accent: #3aa1f2;
+            --bg-dark: #0a0a0c;
+            --card-dark: #141418;
+            --border: #26262e;
+            --text-main: #f4f4f6;
+            --text-sub: #9090a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+        /* Top Header */
+        header { height: 60px; background: #101014; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -0.5px; }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        .search-bar { display: flex; flex: 0 1 450px; margin: 0 12px; }
+        .search-bar input { width: 100%; padding: 8px 14px; background: #1c1c24; border: 1px solid var(--border); border-radius: 20px 0 0 20px; color: #fff; outline: none; font-size: 13px; }
+        .search-bar button { padding: 8px 16px; background: #262630; border: 1px solid var(--border); border-left: none; border-radius: 0 20px 20px 0; color: #fff; cursor: pointer; }
 
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; background-color: #0f0f0f; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
-        .logo { font-size: 28px; font-weight: 900; background: linear-gradient(45deg, #ff0055, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -1px; text-transform: uppercase; }
-        .search-bar { display: flex; flex: 0 1 500px; align-items: center; margin: 0 20px; }
-        .search-bar input { width: 100%; padding: 10px 16px; background-color: #121212; border: 1px solid #303030; border-radius: 20px 0 0 20px; color: white; outline: none; transition: border 0.3s; }
-        .search-bar input:focus { border-color: #555; }
-        .search-bar button { padding: 10px 20px; background-color: #222; border: 1px solid #303030; border-left: none; border-radius: 0 20px 20px 0; color: white; cursor: pointer; transition: background 0.2s; }
-        .search-bar button:hover { background-color: #333; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: #1e1e26; border: 1px solid var(--border); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; position: relative; }
+        .create-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .profile-badge { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(45deg, #00c6ff, #0072ff); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; }
+
+        /* Container & Layout */
+        .app-body { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; position: relative; }
         
-        /* Header Icons & Auth */
-        .header-icons { display: flex; align-items: center; gap: 16px; }
-        .icon-btn { background: #222; border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
-        .icon-btn:hover { background: #333; transform: scale(1.05); }
-        .upload-btn { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
-        .upload-btn:hover { opacity: 0.9; }
-        .auth-buttons { display: flex; gap: 10px; }
-        .auth-btn { padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; border: none; transition: 0.2s; }
-        .login-btn { background: transparent; color: #ffaa00; border: 1px solid #ffaa00; }
-        .login-btn:hover { background: rgba(255, 170, 0, 0.1); }
-        .signup-btn { background: #ffaa00; color: black; }
-        .signup-btn:hover { background: #e69900; }
-        .profile-pic { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(45deg, #3aa1f2, #8a2387); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; cursor: pointer; text-transform: uppercase; border: 2px solid #222; }
+        /* Desktop Sidebar */
+        aside.sidebar { width: 220px; background: #101014; border-right: 1px solid var(--border); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+        .side-link { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; color: var(--text-sub); cursor: pointer; font-size: 14px; font-weight: 600; text-decoration: none; transition: 0.15s; }
+        .side-link:hover { background: #1a1a22; color: #fff; }
+        .side-link.active { background: #262632; color: #fff; }
 
-        /* Layout */
-        .container { display: flex; height: calc(100vh - 64px); }
-        .sidebar { width: 240px; background-color: #0f0f0f; padding: 16px 12px; overflow-y: auto; border-right: 1px solid #222; display: flex; flex-direction: column; gap: 4px; }
-        .sidebar-item { padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 15px; display: flex; gap: 14px; align-items: center; transition: 0.2s; color: #ddd; }
-        .sidebar-item:hover { background-color: #222; color: white; }
-        .sidebar-item.active { background-color: #303030; font-weight: bold; color: white; }
-        .sidebar-divider { height: 1px; background-color: #222; margin: 12px 0; }
-        
-        .main-content { flex: 1; padding: 24px; overflow-y: auto; position: relative; background-color: #0a0a0a; }
+        /* Main Viewport */
+        main.main-viewport { flex: 1; overflow-y: auto; padding: 16px; position: relative; }
 
-        /* Stories (Instagram Style) */
-        .stories-container { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid #222; }
-        .story-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; min-width: 76px; }
-        .story-ring { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 3px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-        .story-item:hover .story-ring { transform: scale(1.05); }
-        .story-inner { width: 100%; height: 100%; background-color: #111; border-radius: 50%; border: 3px solid #0a0a0a; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; color: white; }
-        .story-item span { font-size: 12px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+        /* Mobile Bottom Bar */
+        .bottom-nav { display: none; height: 55px; background: #101014; border-top: 1px solid var(--border); position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; justify-content: space-around; align-items: center; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--text-sub); cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item i { font-style: normal; font-size: 18px; }
 
-        /* View Sections */
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Stories Row */
+        .stories-bar { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; scrollbar-width: none; }
+        .stories-bar::-webkit-scrollbar { display: none; }
+        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-width: 68px; }
+        .ring { width: 62px; height: 62px; border-radius: 50%; background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); padding: 2.5px; display: flex; align-items: center; justify-content: center; }
+        .ring-avatar { width: 100%; height: 100%; border-radius: 50%; background: #202028; border: 2px solid var(--bg-dark); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .story-name { font-size: 11px; color: var(--text-sub); width: 64px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .section-title { margin: 10px 0 20px 0; font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        /* Grids & Cards */
+        .tab-section { display: none; }
+        .tab-section.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Video Grids (Home) */
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 40px; }
-        .video-card { cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; gap: 12px; }
-        .video-card:hover { transform: scale(1.03); }
-        .thumbnail { width: 100%; aspect-ratio: 16/9; background-color: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .duration { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0,0,0,0.8); color: white; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .video-info { display: flex; gap: 12px; }
-        .video-avatar { width: 36px; height: 36px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
-        
-        /* Shorts Grid (Reels) */
-        .shorts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
-        .short-card { cursor: pointer; transition: transform 0.2s; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .short-card:hover { transform: scale(1.05); }
-        .short-thumbnail { width: 100%; aspect-ratio: 9/16; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; position: relative; }
-        .short-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 40%); z-index: 1; }
-        .short-info { position: relative; z-index: 2; }
-        .short-info strong { display: block; margin-bottom: 4px; font-size: 15px; }
-        .short-info span { color: #ddd; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+        .section-header { font-size: 18px; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-        /* Social Feed (Instagram Posts) */
-        .feed-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
-        .post-card { background: #0f0f0f; border: 1px solid #222; border-radius: 16px; overflow: hidden; }
-        .post-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-        .post-header .video-avatar { width: 32px; height: 32px; }
-        .post-header strong { font-size: 14px; }
-        .post-media { width: 100%; aspect-ratio: 4/5; background: #222; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-        .post-actions { padding: 12px 16px; display: flex; gap: 16px; border-top: 1px solid #1a1a1a; }
-        .post-actions i { font-style: normal; font-size: 22px; cursor: pointer; transition: 0.2s; }
-        .post-actions i:hover { transform: scale(1.1); color: #ff0055; }
-        .post-content { padding: 0 16px 16px 16px; }
-        .post-likes { font-weight: bold; font-size: 14px; margin-bottom: 6px; display: block; }
-        .post-caption { font-size: 14px; line-height: 1.4; }
+        /* YouTube Grid */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .v-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: var(--card-dark); border: 1px solid var(--border); transition: transform 0.15s; }
+        .v-card:hover { transform: translateY(-3px); }
+        .v-thumb { width: 100%; aspect-ratio: 16/9; background: #252530; display: flex; align-items: center; justify-content: center; position: relative; font-size: 32px; background-size: cover; background-position: center; }
+        .v-time { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .v-meta { padding: 12px; display: flex; gap: 10px; }
+        .v-avatar { width: 34px; height: 34px; border-radius: 50%; background: #343444; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 13px; }
+        .v-info h4 { font-size: 14px; line-height: 1.3; margin-bottom: 4px; }
+        .v-info p { font-size: 12px; color: var(--text-sub); }
 
-        /* Modals */
-        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal { background-color: #1a1a1a; width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; border: 1px solid #333; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-header h2 { font-size: 20px; }
-        .close-btn { background: none; border: none; color: #888; font-size: 28px; cursor: pointer; transition: 0.2s; line-height: 1; }
-        .close-btn:hover { color: white; }
-        
-        /* Forms */
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; color: #aaa; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; background-color: #0a0a0a; border: 1px solid #333; border-radius: 8px; color: white; outline: none; transition: 0.2s; resize: vertical; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #ffaa00; background-color: #111; }
-        .submit-btn { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: opacity 0.2s; }
-        .submit-btn:hover { opacity: 0.9; }
-        .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: #aaa; }
-        .auth-switch span { color: #ffaa00; cursor: pointer; font-weight: bold; }
+        /* Reels Grid */
+        .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+        .r-card { aspect-ratio: 9/16; border-radius: 14px; overflow: hidden; position: relative; cursor: pointer; background: #222; border: 1px solid var(--border); }
+        .r-card:hover { transform: scale(1.02); transition: 0.15s; }
+        .r-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; background-size: cover; background-position: center; }
+        .r-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%); display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; }
+        .r-overlay strong { font-size: 13px; margin-bottom: 2px; }
+        .r-overlay span { font-size: 11px; color: #ccc; }
 
-        /* Chat Sidebar */
-        .chat-sidebar { position: fixed; top: 64px; right: -380px; width: 380px; height: calc(100vh - 64px); background: #0f0f0f; border-left: 1px solid #222; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 90; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
-        .chat-sidebar.open { right: 0; }
-        .chat-header { padding: 20px; border-bottom: 1px solid #222; font-weight: bold; font-size: 16px; display: flex; flex-direction: column; gap: 12px; background: #151515; }
-        .chat-header-top { display: flex; justify-content: space-between; align-items: center; }
-        .chat-header select { width: 100%; padding: 10px; background: #0a0a0a; color: white; border: 1px solid #333; border-radius: 8px; outline: none; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #0a0a0a; }
-        .msg { max-width: 75%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4; word-wrap: break-word; position: relative; }
-        .msg.received { background: #222; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg.sent { background: linear-gradient(45deg, #ff0055, #ffaa00); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .chat-input { padding: 16px 20px; border-top: 1px solid #222; display: flex; gap: 10px; background: #151515; }
-        .chat-input input { flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid #333; background: #0a0a0a; color: white; outline: none; }
-        .chat-input button { background: #ffaa00; color: black; border: none; padding: 0 20px; border-radius: 24px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .chat-input button:hover { background: #e69900; }
+        /* Social Posts Feed */
+        .feed-wrap { max-width: 540px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .post-card { background: var(--card-dark); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .post-top { padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+        .post-media { width: 100%; aspect-ratio: 1/1; background: #232330; display: flex; align-items: center; justify-content: center; font-size: 48px; background-size: cover; background-position: center; }
+        .post-actions { padding: 10px 14px; display: flex; gap: 16px; font-size: 20px; }
+        .post-actions span { cursor: pointer; transition: 0.1s; }
+        .post-actions span:active { transform: scale(1.2); }
+        .post-caption-box { padding: 0 14px 12px 14px; font-size: 13px; line-height: 1.4; }
 
-        /* Video Call Screen */
-        .call-screen { background: #0a0a0a; text-align: center; padding: 40px 20px; }
-        .caller-avatar { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(45deg, #ff0055, #ffaa00); margin: 0 auto 30px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; animation: pulse 2s infinite; border: 4px solid #222; }
-        .call-buttons { display: flex; justify-content: center; gap: 30px; margin-top: 50px; }
-        .call-btn { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; font-size: 28px; color: white; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .call-btn:hover { transform: scale(1.1); }
-        .call-btn.accept { background: #25D366; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
-        .call-btn.decline { background: #ff3b30; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4); }
+        /* Modals & Overlays */
+        .modal-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-window { background: #16161c; border: 1px solid var(--border); border-radius: 14px; width: 92%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; }
+        .close-btn { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
-            70% { box-shadow: 0 0 0 25px rgba(255, 0, 85, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+        /* Interactive Video Player Modal */
+        #videoPlayerModal .modal-window { max-width: 820px; width: 95%; padding: 0; overflow: hidden; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+        .video-box video { width: 100%; height: 100%; object-fit: contain; }
+        .video-player-details { padding: 16px; }
+        .v-stats-bar { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .comments-section { margin-top: 14px; }
+        .comment-input-box { display: flex; gap: 8px; margin-bottom: 14px; }
+        .comment-input-box input { flex: 1; padding: 8px 12px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff; outline: none; }
+        .comment-list { max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+        .comment-item { background: #202028; padding: 8px 10px; border-radius: 6px; }
+
+        /* Interactive Reel Viewer Modal */
+        #reelViewerModal .modal-window { max-width: 360px; width: 90%; height: 85vh; padding: 0; background: #000; border-radius: 16px; position: relative; overflow: hidden; }
+        .reel-player-screen { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .reel-side-bar { position: absolute; right: 12px; bottom: 60px; display: flex; flex-direction: column; gap: 16px; z-index: 10; align-items: center; }
+        .reel-action-btn { background: rgba(0,0,0,0.5); border: none; width: 44px; height: 44px; border-radius: 50%; color: #fff; font-size: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+        .reel-action-btn span { font-size: 10px; font-weight: bold; margin-top: 2px; }
+
+        /* Interactive Story Viewer Modal */
+        #storyViewerModal .modal-window { max-width: 360px; height: 80vh; background: #1a1a24; padding: 0; position: relative; overflow: hidden; }
+        .story-progress-bg { position: absolute; top: 10px; left: 10px; right: 10px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 3px; overflow: hidden; z-index: 10; }
+        .story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
+        .story-user-tag { position: absolute; top: 20px; left: 14px; z-index: 10; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; }
+
+        /* Messages Panel */
+        .chat-drawer { position: fixed; top: 60px; right: -360px; width: 360px; height: calc(100vh - 60px); background: #121218; border-left: 1px solid var(--border); transition: right 0.25s ease; z-index: 150; display: flex; flex-direction: column; }
+        .chat-drawer.open { right: 0; }
+        .chat-header { padding: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 75%; padding: 8px 12px; border-radius: 14px; font-size: 13px; }
+        .bubble.me { background: var(--primary); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .bubble.them { background: #262632; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-input-bar { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .chat-input-bar input { flex: 1; padding: 8px 12px; background: #1c1c24; border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            aside.sidebar { display: none; }
+            .bottom-nav { display: flex; }
+            main.main-viewport { padding: 12px 10px 70px 10px; }
+            .search-bar { display: none; }
+            .chat-drawer { width: 100%; right: -100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation -->
+    <!-- Header -->
     <header>
         <a href="#" class="logo" onclick="switchTab('home')">FLIX.COM</a>
         <div class="search-bar">
-            <input type="text" placeholder="Search accounts, videos, reels, tags...">
-            <button>Search</button>
+            <input type="text" id="globalSearch" placeholder="Search creators, videos, reels..." onkeyup="filterContent(this.value)">
+            <button>🔍</button>
         </div>
-        <div class="header-icons">
-            <button class="icon-btn" id="callBtn" onclick="openCallSetup()" style="display:none;" title="Video Call">📞</button>
-            <button class="icon-btn" id="chatBtn" onclick="toggleChat()" style="display:none;" title="Messages">💬</button>
-            <button class="upload-btn" id="uploadBtn" onclick="openModal('uploadModal')" style="display:none;">+ Create</button>
-            <div class="profile-pic" id="profilePic" onclick="logout()" style="display:none;" title="Click to Logout">U</div>
-            
-            <div class="auth-buttons" id="authButtons">
-                <button class="auth-btn login-btn" onclick="openAuth('login')">Log In</button>
-                <button class="auth-btn signup-btn" onclick="openAuth('signup')">Sign Up</button>
-            </div>
+        <div class="header-actions">
+            <button class="create-btn" onclick="openModal('uploadModal')">➕ <span style="display:inline;">Create</span></button>
+            <div class="icon-btn" onclick="openCallModal()" title="Start Call">📞</div>
+            <div class="icon-btn" onclick="toggleChat()" title="Messages">💬</div>
+            <div class="profile-badge" id="myAvatar" onclick="handleAuthPrompt()">U</div>
         </div>
     </header>
 
-    <div class="container">
-        <!-- Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-item active" id="tab-home" onclick="switchTab('home')">🏠 Home</div>
-            <div class="sidebar-item" id="tab-reels" onclick="switchTab('reels')">📱 Reels</div>
-            <div class="sidebar-item" id="tab-feed" onclick="switchTab('feed')">📸 Social Feed</div>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-item" onclick="alert('Library requires premium features.')">📚 Library</div>
-            <div class="sidebar-item" onclick="alert('History is synced in the cloud.')">⏱️ History</div>
-            <div class="sidebar-item" onclick="alert('Liked content saved.')">❤️ Liked</div>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-item" style="color: #666; font-size: 12px; cursor: default; flex-direction: column; align-items: flex-start; gap: 6px;">
-                <strong>FLIX.COM CREATOR RANKS</strong>
-                <span>⭐ Rising: 1k followers</span>
-                <span>🔥 Pro: 10k followers</span>
-                <span>👑 Icon: 100k followers</span>
-            </div>
-        </div>
+    <div class="app-body">
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="sidebar">
+            <div class="side-link active" id="side-home" onclick="switchTab('home')">🏠 <span>Home</span></div>
+            <div class="side-link" id="side-reels" onclick="switchTab('reels')">📱 <span>Reels</span></div>
+            <div class="side-link" id="side-feed" onclick="switchTab('feed')">📸 <span>Social Feed</span></div>
+            <div style="height: 1px; background: var(--border); margin: 10px 0;"></div>
+            <div class="side-link" onclick="alert('Feature synced with Cloud Vault!')">📚 <span>Library</span></div>
+            <div class="side-link" onclick="alert('History saved on device.')">⏱️ <span>History</span></div>
+            <div class="side-link" onclick="alert('Liked items bookmarked.')">❤️ <span>Liked</span></div>
+        </aside>
 
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Instagram Style Stories (Visible across all tabs but separate logic can apply) -->
-            <div class="stories-container" id="storiesContainer"></div>
+        <!-- Main Workspace -->
+        <main class="main-viewport">
+            <!-- Instagram / Snapchat Style Stories -->
+            <div class="stories-bar" id="storiesBar"></div>
 
             <!-- Home Tab (YouTube Style) -->
-            <div id="homeSection" class="view-section active">
-                <div class="section-title">▶️ Recommended For You</div>
-                <div class="video-grid" id="longVideosGrid"></div>
-            </div>
+            <section id="tab-home" class="tab-section active">
+                <div class="section-header">▶️ Recommended Videos</div>
+                <div class="video-grid" id="videoGrid"></div>
+            </section>
 
-            <!-- Reels Tab (Shorts/TikTok Style) -->
-            <div id="reelsSection" class="view-section">
-                <div class="section-title">📱 Trending Reels</div>
-                <div class="shorts-grid" id="shortsGrid"></div>
-            </div>
+            <!-- Reels Tab (TikTok Style) -->
+            <section id="tab-reels" class="tab-section">
+                <div class="section-header">📱 Trending Reels</div>
+                <div class="reels-grid" id="reelsGrid"></div>
+            </section>
 
-            <!-- Social Feed Tab (Instagram Style) -->
-            <div id="feedSection" class="view-section">
-                <div class="section-title" style="justify-content: center;">📸 Recent Posts</div>
-                <div class="feed-container" id="feedContainer"></div>
-            </div>
-        </div>
+            <!-- Feed Tab (Instagram Posts) -->
+            <section id="tab-feed" class="tab-section">
+                <div class="section-header" style="justify-content: center;">📸 Community Posts</div>
+                <div class="feed-wrap" id="feedWrap"></div>
+            </section>
+        </main>
 
-        <!-- Right Side Chat Panel -->
-        <div class="chat-sidebar" id="chatSidebar">
+        <!-- Direct Messages Drawer -->
+        <div class="chat-drawer" id="chatDrawer">
             <div class="chat-header">
-                <div class="chat-header-top">
-                    <span>Direct Messages</span>
-                    <button class="close-btn" style="font-size: 20px;" onclick="toggleChat()">✕</button>
+                <div>
+                    <strong>Direct Messages</strong>
+                    <div style="font-size: 11px; color: #10b981;">● Online</div>
                 </div>
-                <select id="chatUserSelect" onchange="loadChat()">
-                    <option value="">Select a user to chat...</option>
+                <button class="close-btn" onclick="toggleChat()">✕</button>
+            </div>
+            <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                <select id="chatContactSelect" onchange="renderConversation()" style="width: 100%; padding: 8px; background: #1c1c24; border: 1px solid var(--border); color: #fff; border-radius: 6px; outline: none;">
+                    <option value="Alex_Creator">@Alex_Creator</option>
+                    <option value="Sara_Studio">@Sara_Studio</option>
+                    <option value="NeonVibe">@NeonVibe</option>
                 </select>
             </div>
-            <div class="chat-messages" id="chatMessages">
-                <div style="color:#666; text-align:center; margin-top:40px;">Select a user to start chatting!</div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Message @user..." onkeypress="if(event.key === 'Enter') sendMsg()">
-                <button onclick="sendMsg()">Send</button>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-bar">
+                <input type="text" id="chatInput" placeholder="Send a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="create-btn" onclick="sendChatMessage()">Send</button>
             </div>
         </div>
     </div>
 
-    <!-- Auth Modal -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="authTitle">Create Account</h2>
-                <button class="close-btn" onclick="closeModal('authModal')">✕</button>
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i>🏠</i><span>Home</span></div>
+        <div class="nav-item" id="nav-reels" onclick="switchTab('reels')"><i>📱</i><span>Reels</span></div>
+        <div class="nav-item" onclick="openModal('uploadModal')"><i style="font-size: 24px; color: var(--secondary);">➕</i><span>Post</span></div>
+        <div class="nav-item" id="nav-feed" onclick="switchTab('feed')"><i>📸</i><span>Feed</span></div>
+        <div class="nav-item" onclick="toggleChat()"><i>💬</i><span>Chat</span></div>
+    </nav>
+
+    <!-- 1. YOUTUBE-STYLE VIDEO PLAYER MODAL -->
+    <div class="modal-screen" id="videoPlayerModal">
+        <div class="modal-window">
+            <div class="video-box">
+                <button class="close-btn" onclick="closeModal('videoPlayerModal')" style="position: absolute; top: 10px; right: 14px; z-index: 10; background: rgba(0,0,0,0.6); border-radius: 50%; width: 34px; height: 34px;">✕</button>
+                <div id="videoVisualContainer" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 54px; background: #000;">
+                    <!-- Native video or stylized preview -->
+                </div>
             </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="authUsername" placeholder="Choose a username">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="authPassword" placeholder="Enter password">
-            </div>
-            <button class="submit-btn" id="authSubmitBtn" onclick="handleAuth()">Sign Up</button>
-            <div class="auth-switch" id="authSwitchText">
-                Already have an account? <span onclick="openAuth('login')">Log In</span>
+            <div class="video-player-details">
+                <h3 id="vpTitle">Video Title</h3>
+                <div class="v-stats-bar">
+                    <span id="vpViews" style="color: var(--text-sub); font-size: 13px;">0 views</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="create-btn" id="vpLikeBtn" style="background: #252532;" onclick="likeCurrentVideo()">👍 <span id="vpLikes">12K</span></button>
+                        <button class="create-btn" style="background: #252532;" onclick="alert('Link copied to clipboard!')">↗️ Share</button>
+                    </div>
+                </div>
+                <!-- Comments -->
+                <div class="comments-section">
+                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Comments</div>
+                    <div class="comment-input-box">
+                        <input type="text" id="vpCommentInput" placeholder="Add a public comment...">
+                        <button class="create-btn" onclick="addCommentToVideo()">Post</button>
+                    </div>
+                    <div class="comment-list" id="vpCommentsList"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Upload Modal -->
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Create New Post</h2>
+    <!-- 2. TIKTOK-STYLE REEL VIEWER MODAL -->
+    <div class="modal-screen" id="reelViewerModal">
+        <div class="modal-window">
+            <button class="close-btn" onclick="closeModal('reelViewerModal')" style="position: absolute; top: 12px; left: 12px; z-index: 20;">✕</button>
+            <div class="reel-player-screen" id="reelScreen">
+                <!-- Current Reel Content Rendered Dynamically -->
+            </div>
+            <div class="reel-side-bar">
+                <button class="reel-action-btn" onclick="likeCurrentReel()">❤️<span id="reelLikeCount">34K</span></button>
+                <button class="reel-action-btn" onclick="alert('Comment dialog')">💬<span>1.2K</span></button>
+                <button class="reel-action-btn" onclick="alert('Link copied!')">↗️<span>Share</span></button>
+                <button class="reel-action-btn" onclick="nextReel()">⬇️<span>Next</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. INSTAGRAM-STYLE STORY VIEWER MODAL -->
+    <div class="modal-screen" id="storyViewerModal" onclick="closeModal('storyViewerModal')">
+        <div class="modal-window" onclick="event.stopPropagation()">
+            <div class="story-progress-bg"><div class="story-progress-fill" id="storyProgress"></div></div>
+            <div class="story-user-tag">
+                <div class="v-avatar" id="storyAvatar">A</div>
+                <span id="storyAuthor">@Creator</span>
+            </div>
+            <div id="storyVisual" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 60px;">
+                🔥
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. UPLOAD CONTENT MODAL -->
+    <div class="modal-screen" id="uploadModal">
+        <div class="modal-window">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3>Create on Flix.com</h3>
                 <button class="close-btn" onclick="closeModal('uploadModal')">✕</button>
             </div>
-            <div class="form-group">
-                <label>Post Type</label>
-                <select id="uploadType">
-                    <option value="video">Long Video (Home)</option>
-                    <option value="reel">Reel / Short</option>
-                    <option value="post">Social Post (Feed)</option>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="font-size: 12px; color: var(--text-sub);">Select Format</label>
+                <select id="upType" style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                    <option value="video">Long Video (YouTube style)</option>
+                    <option value="reel">Reel (TikTok style)</option>
+                    <option value="post">Feed Post (Instagram style)</option>
+                    <option value="story">Story</option>
                 </select>
-            </div>
-            <div class="form-group">
-                <label>Title / Caption</label>
-                <textarea id="uploadTitle" rows="3" placeholder="Write a catchy caption or title..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Media File</label>
-                <div style="padding: 20px; border: 2px dashed #444; border-radius: 8px; text-align: center; color: #888; cursor: pointer; transition: 0.2s;" onclick="alert('File explorer mock opened!')">
-                    Click to browse files (Simulated)
-                </div>
-            </div>
-            <button class="submit-btn" onclick="handleUpload()">Publish</button>
-        </div>
-    </div>
 
-    <!-- Video Call Setup Modal -->
-    <div class="modal-overlay" id="callModal">
-        <!-- State 1: Select User -->
-        <div class="modal" id="callSetupScreen">
-            <div class="modal-header">
-                <h2>Start Video Call</h2>
-                <button class="close-btn" onclick="closeModal('callModal')">✕</button>
-            </div>
-            <div class="form-group">
-                <label>Select User to Call</label>
-                <select id="callUserSelect">
-                    <option value="">Select a user...</option>
-                </select>
-            </div>
-            <button class="submit-btn" style="background: linear-gradient(45deg, #128C7E, #25D366);" onclick="startCallRinging()">Call Now</button>
-        </div>
-        
-        <!-- State 2: Ringing Screen -->
-        <div class="modal call-screen" id="callRingingScreen" style="display:none;">
-            <h3 style="color:#aaa; margin-bottom:30px; letter-spacing: 2px; text-transform: uppercase; font-size: 14px;">Calling...</h3>
-            <div class="caller-avatar" id="callingAvatar">U</div>
-            <h2 id="callingName" style="font-size: 24px; margin-bottom: 8px;">@Username</h2>
-            <p style="color: #888; font-size: 14px;">Flix Secure Encrypted Call</p>
-            <div class="call-buttons">
-                <button class="call-btn decline" onclick="closeModal('callModal')" title="End Call">✕</button>
-                <button class="call-btn accept" onclick="alert('User is unavailable.'); closeModal('callModal')" title="Accept Dummy">📞</button>
+                <label style="font-size: 12px; color: var(--text-sub);">Title / Caption</label>
+                <input type="text" id="upTitle" placeholder="Write caption or title..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+
+                <label style="font-size: 12px; color: var(--text-sub);">Upload Media File (Image/Video)</label>
+                <input type="file" id="upFile" accept="video/*,image/*" style="font-size: 12px; color: #aaa;">
+
+                <button class="create-btn" style="width: 100%; justify-content: center; padding: 12px; margin-top: 10px;" onclick="handlePublish()">Publish to Flix</button>
             </div>
         </div>
     </div>
 
-    <!-- Script Block -->
+    <!-- 5. CALL SIMULATOR MODAL -->
+    <div class="modal-screen" id="callModal">
+        <div class="modal-window" style="text-align: center; padding: 30px;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--secondary)); margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; animation: pulse 1.5s infinite;">
+                👤
+            </div>
+            <h3>Calling @Alex_Creator...</h3>
+            <p style="font-size: 12px; color: var(--text-sub); margin-top: 6px;">End-to-End Encrypted HD Call</p>
+            <div style="margin-top: 30px; display: flex; justify-content: center; gap: 20px;">
+                <button class="create-btn" style="background: #ef4444; width: 50px; height: 50px; border-radius: 50%; padding: 0; justify-content: center;" onclick="closeModal('callModal')">✖</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- 1. LOCAL STORAGE DATABASE ---
-        let users = JSON.parse(localStorage.getItem('flix_users')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('flix_currentUser')) || null;
-        let chats = JSON.parse(localStorage.getItem('flix_chats')) || {};
-        
-        // Content Database
-        let contentDb = JSON.parse(localStorage.getItem('flix_content')) || {
-            stories: ['FlixOfficial', 'AI_Genius', 'CyberPunk'],
+        // Global Database
+        let db = {
+            currentUser: "You",
+            stories: [
+                { user: "Alex_Creator", bg: "linear-gradient(45deg, #f093fb, #f5576c)", emoji: "🏖️" },
+                { user: "Sara_Studio", bg: "linear-gradient(45deg, #5ee7df, #b490ca)", emoji: "🎨" },
+                { user: "NeonVibe", bg: "linear-gradient(45deg, #00dbde, #fc00ff)", emoji: "⚡" },
+                { user: "TechPulse", bg: "linear-gradient(45deg, #fa709a, #fee140)", emoji: "🚀" }
+            ],
             videos: [
-                { id: 'v1', author: 'AI_Genius', title: 'The Future of Web UI Design in 2027', views: 125000, bg: 'linear-gradient(135deg, #00c6ff, #0072ff)' },
-                { id: 'v2', author: 'FlixOfficial', title: 'Welcome to Flix.com - Tour', views: 980000, bg: 'linear-gradient(135deg, #f12711, #f5af19)' },
+                { id: "v1", title: "Building a Full Web Application in 15 Minutes", author: "TechPulse", views: "142K", time: "14:20", bg: "linear-gradient(135deg, #1e3c72, #2a5298)", comments: ["Super informative!", "Best tutorial so far."], likes: 1240 },
+                { id: "v2", title: "Cyberpunk 2077 Ultra Photorealistic Graphics Mod", author: "NeonVibe", views: "890K", time: "08:45", bg: "linear-gradient(135deg, #ff0844, #ffb199)", comments: ["My GPU melted watching this.", "Insane lighting."], likes: 45200 }
             ],
             reels: [
-                { id: 'r1', author: 'CyberPunk', title: 'Neon city aesthetic vibes 🌃✨', views: 450000, bg: 'linear-gradient(to bottom, #8A2387, #E94057, #F27121)' },
-                { id: 'r2', author: 'AI_Genius', title: 'Coding speedrun #shorts', views: 1200000, bg: 'linear-gradient(to bottom, #11998e, #38ef7d)' },
-                { id: 'r3', author: 'Creator123', title: 'Morning coffee art ☕', views: 85000, bg: 'linear-gradient(to bottom, #C6FFDD, #FBD786, #f7797d)' },
+                { id: "r1", title: "Morning Espresso Routine ☕✨", author: "Sara_Studio", bg: "linear-gradient(to bottom, #8A2387, #E94057, #F27121)", emoji: "☕", likes: 84300 },
+                { id: "r2", title: "CSS Tricks You Didn't Know Existed! 🔥", author: "Alex_Creator", bg: "linear-gradient(to bottom, #00b09b, #96c93d)", emoji: "💻", likes: 120500 },
+                { id: "r3", title: "Tokyo City Lights Walk 4K 🇯🇵", author: "NeonVibe", bg: "linear-gradient(to bottom, #2b5876, #4e4376)", emoji: "🏮", likes: 62000 }
             ],
             posts: [
-                { id: 'p1', author: 'FlixOfficial', caption: 'We just launched the new Feed tab! What do you guys think? Let us know in the comments below! 👇🚀 #FlixLaunch', likes: 12400, bg: 'linear-gradient(45deg, #12c2e9, #c471ed, #f64f59)' },
-                { id: 'p2', author: 'CyberPunk', caption: 'Setup looking clean today. Ready for the weekend stream. 🎮', likes: 890, bg: 'linear-gradient(45deg, #0f2027, #203a43, #2c5364)' }
+                { id: "p1", author: "Alex_Creator", caption: "Just deployed Flix.com! Let me know what features you want next.", likes: 420, bg: "linear-gradient(45deg, #13547a, #80d0c7)", emoji: "🚀" },
+                { id: "p2", author: "Sara_Studio", caption: "Color palette exploration for an upcoming illustration suite.", likes: 890, bg: "linear-gradient(45deg, #ff9a9e, #fecfef)", emoji: "🎨" }
             ]
         };
 
-        if(users.length === 0) {
-            users = [
-                {username: 'FlixOfficial', password: '123'},
-                {username: 'AI_Genius', password: '123'},
-                {username: 'CyberPunk', password: '123'}
-            ];
-            localStorage.setItem('flix_users', JSON.stringify(users));
+        let currentReelIndex = 0;
+        let activeVideo = null;
+        let storyTimer = null;
+
+        // Render Stories
+        function renderStories() {
+            const bar = document.getElementById('storiesBar');
+            bar.innerHTML = `
+                <div class="story-circle" onclick="openModal('uploadModal')">
+                    <div class="ring" style="background: #333;"><div class="ring-avatar">+</div></div>
+                    <span class="story-name">Add Story</span>
+                </div>
+            `;
+            db.stories.forEach((s, idx) => {
+                bar.innerHTML += `
+                    <div class="story-circle" onclick="viewStory(${idx})">
+                        <div class="ring"><div class="ring-avatar" style="background:${s.bg}">${s.user.charAt(0)}</div></div>
+                        <span class="story-name">${s.user}</span>
+                    </div>
+                `;
+            });
         }
 
-        function saveContent() {
-            localStorage.setItem('flix_content', JSON.stringify(contentDb));
+        // Render Home Videos
+        function renderVideos() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+            db.videos.forEach(v => {
+                grid.innerHTML += `
+                    <div class="v-card" onclick="openVideoPlayer('${v.id}')">
+                        <div class="v-thumb" style="background:${v.bg}">${v.file ? `<video src="${v.file}" style="width:100%;height:100%;object-fit:cover;"></video>` : '▶️'} <span class="v-time">${v.time}</span></div>
+                        <div class="v-meta">
+                            <div class="v-avatar">${v.author.charAt(0)}</div>
+                            <div class="v-info">
+                                <h4>${v.title}</h4>
+                                <p>@${v.author} • ${v.views} views</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // --- 2. AUTHENTICATION ---
-        let authMode = 'signup'; 
-        function openAuth(mode) {
-            authMode = mode;
-            document.getElementById('authTitle').innerText = mode === 'signup' ? 'Create Account' : 'Welcome Back';
-            document.getElementById('authSubmitBtn').innerText = mode === 'signup' ? 'Sign Up' : 'Log In';
-            
-            if(mode === 'signup') {
-                document.getElementById('authSwitchText').innerHTML = `Already have an account? <span onclick="openAuth('login')">Log In</span>`;
+        // Render Reels
+        function renderReels() {
+            const grid = document.getElementById('reelsGrid');
+            grid.innerHTML = '';
+            db.reels.forEach((r, idx) => {
+                grid.innerHTML += `
+                    <div class="r-card" onclick="openReelPlayer(${idx})">
+                        <div class="r-bg" style="background:${r.bg}">${r.file ? `<video src="${r.file}" style="width:100%;height:100%;object-fit:cover;"></video>` : r.emoji}</div>
+                        <div class="r-overlay">
+                            <strong>${r.title}</strong>
+                            <span>@${r.author}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Feed Posts
+        function renderPosts() {
+            const wrap = document.getElementById('feedWrap');
+            wrap.innerHTML = '';
+            db.posts.forEach(p => {
+                wrap.innerHTML += `
+                    <div class="post-card">
+                        <div class="post-top">
+                            <div class="v-avatar">${p.author.charAt(0)}</div>
+                            <strong>@${p.author}</strong>
+                        </div>
+                        <div class="post-media" style="background:${p.bg}">${p.file ? `<img src="${p.file}" style="width:100%;height:100%;object-fit:cover;">` : p.emoji}</div>
+                        <div class="post-actions">
+                            <span onclick="this.style.color = this.style.color==='red'?'':'red'">❤️</span>
+                            <span onclick="alert('Comment dialog')">💬</span>
+                            <span onclick="alert('Share options')">↗️</span>
+                        </div>
+                        <div class="post-caption-box">
+                            <strong>${p.likes} likes</strong><br>
+                            <strong>@${p.author}</strong> ${p.caption}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- Interactive Modals Logic ---
+
+        // 1. YouTube Player
+        function openVideoPlayer(id) {
+            activeVideo = db.videos.find(v => v.id === id);
+            if(!activeVideo) return;
+
+            document.getElementById('vpTitle').innerText = activeVideo.title;
+            document.getElementById('vpViews').innerText = `${activeVideo.views} views • Uploaded recently`;
+            document.getElementById('vpLikes').innerText = activeVideo.likes;
+
+            const visual = document.getElementById('videoVisualContainer');
+            if(activeVideo.file) {
+                visual.innerHTML = `<video src="${activeVideo.file}" controls autoplay style="width:100%;height:100%;"></video>`;
             } else {
-                document.getElementById('authSwitchText').innerHTML = `Don't have an account? <span onclick="openAuth('signup')">Sign Up</span>`;
+                visual.style.background = activeVideo.bg;
+                visual.innerHTML = '▶️';
             }
-            openModal('authModal');
+
+            renderVideoComments();
+            openModal('videoPlayerModal');
         }
 
-        function handleAuth() {
-            const user = document.getElementById('authUsername').value.trim();
-            const pass = document.getElementById('authPassword').value.trim();
-            if(!user || !pass) { alert("Please enter username and password."); return; }
+        function renderVideoComments() {
+            const list = document.getElementById('vpCommentsList');
+            list.innerHTML = '';
+            activeVideo.comments.forEach(c => {
+                list.innerHTML += `<div class="comment-item"><strong>@Viewer:</strong> ${c}</div>`;
+            });
+        }
 
-            if(authMode === 'signup') {
-                if(users.find(u => u.username === user)) { alert("Username taken! Try logging in."); return; }
-                users.push({ username: user, password: pass });
-                localStorage.setItem('flix_users', JSON.stringify(users));
-                currentUser = user;
-                // Add user to stories
-                if(!contentDb.stories.includes(user)) {
-                    contentDb.stories.push(user);
-                    saveContent();
+        function addCommentToVideo() {
+            const input = document.getElementById('vpCommentInput');
+            if(!input.value.trim()) return;
+            activeVideo.comments.unshift(input.value.trim());
+            input.value = '';
+            renderVideoComments();
+        }
+
+        function likeCurrentVideo() {
+            activeVideo.likes++;
+            document.getElementById('vpLikes').innerText = activeVideo.likes;
+        }
+
+        // 2. TikTok / Reels Player
+        function openReelPlayer(idx) {
+            currentReelIndex = idx;
+            const r = db.reels[idx];
+            const screen = document.getElementById('reelScreen');
+            if(r.file) {
+                screen.innerHTML = `<video src="${r.file}" autoplay loop style="width:100%;height:100%;object-fit:cover;"></video>`;
+            } else {
+                screen.style.background = r.bg;
+                screen.innerHTML = `<div style="font-size:70px;">${r.emoji}</div><div style="position:absolute;bottom:20px;left:14px;color:#fff;"><h3>${r.title}</h3><p>@${r.author}</p></div>`;
+            }
+            document.getElementById('reelLikeCount').innerText = r.likes;
+            openModal('reelViewerModal');
+        }
+
+        function nextReel() {
+            currentReelIndex = (currentReelIndex + 1) % db.reels.length;
+            openReelPlayer(currentReelIndex);
+        }
+
+        function likeCurrentReel() {
+            db.reels[currentReelIndex].likes++;
+            document.getElementById('reelLikeCount').innerText = db.reels[currentReelIndex].likes;
+        }
+
+        // 3. Instagram Story Player
+        function viewStory(idx) {
+            const story = db.stories[idx];
+            document.getElementById('storyAuthor').innerText = `@${story.user}`;
+            document.getElementById('storyAvatar').innerText = story.user.charAt(0);
+            const visual = document.getElementById('storyVisual');
+            visual.style.background = story.bg;
+            visual.innerHTML = story.emoji;
+
+            openModal('storyViewerModal');
+
+            const bar = document.getElementById('storyProgress');
+            bar.style.width = '0%';
+            let width = 0;
+            clearInterval(storyTimer);
+            storyTimer = setInterval(() => {
+                width += 2;
+                bar.style.width = width + '%';
+                if(width >= 100) {
+                    clearInterval(storyTimer);
+                    closeModal('storyViewerModal');
                 }
-            } else {
-                const found = users.find(u => u.username === user && u.password === pass);
-                if(found) { currentUser = user; }
-                else { alert("Invalid username or password."); return; }
-            }
-
-            localStorage.setItem('flix_currentUser', JSON.stringify(currentUser));
-            closeModal('authModal');
-            document.getElementById('authUsername').value = '';
-            document.getElementById('authPassword').value = '';
-            updateAuthUI();
-            renderUI();
+            }, 60);
         }
 
-        function logout() {
-            if(confirm("Are you sure you want to log out?")) {
-                currentUser = null;
-                localStorage.removeItem('flix_currentUser');
-                updateAuthUI();
-                renderUI();
-            }
-        }
-
-        function updateAuthUI() {
-            if(currentUser) {
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('callBtn').style.display = 'flex';
-                document.getElementById('chatBtn').style.display = 'flex';
-                document.getElementById('uploadBtn').style.display = 'block';
-                const pic = document.getElementById('profilePic');
-                pic.style.display = 'flex';
-                pic.innerText = currentUser.charAt(0);
-                populateContacts(); 
-            } else {
-                document.getElementById('authButtons').style.display = 'flex';
-                document.getElementById('callBtn').style.display = 'none';
-                document.getElementById('chatBtn').style.display = 'none';
-                document.getElementById('uploadBtn').style.display = 'none';
-                document.getElementById('profilePic').style.display = 'none';
-                document.getElementById('chatSidebar').classList.remove('open');
-            }
-        }
-
-        // --- 3. CORE UI & UPLOAD LOGIC ---
-        function switchTab(tabName) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`${tabName}Section`).classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-        }
-
-        function handleUpload() {
-            if(!currentUser) { alert("Please log in first!"); return; }
-            
-            const type = document.getElementById('uploadType').value;
-            const title = document.getElementById('uploadTitle').value.trim();
-            if(!title) { alert("Please enter a caption or title!"); return; }
-
-            // Generate a random gradient for the mock media
-            const colors = ['#ff0055', '#ffaa00', '#00c6ff', '#0072ff', '#8A2387', '#E94057', '#11998e', '#38ef7d'];
-            const c1 = colors[Math.floor(Math.random()*colors.length)];
-            const c2 = colors[Math.floor(Math.random()*colors.length)];
-            const bg = `linear-gradient(${Math.floor(Math.random()*360)}deg, ${c1}, ${c2})`;
-
-            const newItem = {
-                id: Date.now().toString(),
-                author: currentUser,
-                bg: bg,
-                views: 0,
-                likes: 0
-            };
+        // 4. Upload System (Handles Video/Images with Real Previews)
+        function handlePublish() {
+            const type = document.getElementById('upType').value;
+            const title = document.getElementById('upTitle').value || "New Post";
+            const fileInput = document.getElementById('upFile');
+            const fileObj = fileInput.files[0];
+            const fileUrl = fileObj ? URL.createObjectURL(fileObj) : null;
 
             if(type === 'video') {
-                newItem.title = title;
-                contentDb.videos.unshift(newItem); // Add to beginning
+                db.videos.unshift({ id: 'v' + Date.now(), title: title, author: db.currentUser, views: "1", time: "01:00", bg: "#1a1a24", file: fileUrl, comments: [], likes: 1 });
                 switchTab('home');
             } else if(type === 'reel') {
-                newItem.title = title;
-                contentDb.reels.unshift(newItem);
+                db.reels.unshift({ id: 'r' + Date.now(), title: title, author: db.currentUser, bg: "#1a1a24", emoji: "⚡", file: fileUrl, likes: 1 });
                 switchTab('reels');
             } else if(type === 'post') {
-                newItem.caption = title;
-                contentDb.posts.unshift(newItem);
+                db.posts.unshift({ id: 'p' + Date.now(), author: db.currentUser, caption: title, likes: 1, bg: "#1a1a24", emoji: "📸", file: fileUrl });
                 switchTab('feed');
+            } else if(type === 'story') {
+                db.stories.unshift({ user: db.currentUser, bg: "#ff0055", emoji: "🌟" });
             }
 
-            saveContent();
-            renderUI();
+            renderAll();
             closeModal('uploadModal');
-            document.getElementById('uploadTitle').value = '';
+            document.getElementById('upTitle').value = '';
+            document.getElementById('upFile').value = '';
         }
 
-        function renderUI() {
-            // Render Stories
-            const storiesDiv = document.getElementById('storiesContainer');
-            storiesDiv.innerHTML = '';
-            if(currentUser) {
-                storiesDiv.innerHTML += `
-                    <div class="story-item" onclick="openModal('uploadModal')">
-                        <div class="story-ring" style="background:#444;">
-                            <div class="story-inner" style="background:#222; border-color:#0a0a0a;">+</div>
-                        </div>
-                        <span>Your Story</span>
-                    </div>`;
-            }
-            contentDb.stories.forEach(s => {
-                storiesDiv.innerHTML += `
-                    <div class="story-item">
-                        <div class="story-ring">
-                            <div class="story-inner">${s.charAt(0).toUpperCase()}</div>
-                        </div>
-                        <span>${s}</span>
-                    </div>`;
-            });
-
-            // Render Home Videos
-            const longGrid = document.getElementById('longVideosGrid');
-            longGrid.innerHTML = '';
-            contentDb.videos.forEach(v => {
-                longGrid.innerHTML += `
-                    <div class="video-card">
-                        <div class="thumbnail" style="background:${v.bg}">▶️<span class="duration">10:00</span></div>
-                        <div class="video-info">
-                            <div class="video-avatar">${v.author.charAt(0).toUpperCase()}</div>
-                            <div>
-                                <strong style="font-size:15px; line-height:1.2; display:block; margin-bottom:4px;">${v.title}</strong>
-                                <span style="color:#aaa;font-size:13px;">@${v.author} • ${(v.views/1000).toFixed(1)}K views</span>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-
-            // Render Reels
-            const shortsGrid = document.getElementById('shortsGrid');
-            shortsGrid.innerHTML = '';
-            contentDb.reels.forEach(s => {
-                shortsGrid.innerHTML += `
-                    <div class="short-card">
-                        <div class="short-thumbnail" style="background:${s.bg}">
-                            <div class="short-overlay"></div>
-                            <div class="short-info">
-                                <strong>${s.title}</strong>
-                                <span>@${s.author} • ${(s.views/1000).toFixed(1)}K views</span>
-                            </div>
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 30px; opacity: 0.8;">▶️</div>
-                        </div>
-                    </div>`;
-            });
-
-            // Render Feed Posts
-            const feedContainer = document.getElementById('feedContainer');
-            feedContainer.innerHTML = '';
-            contentDb.posts.forEach(p => {
-                feedContainer.innerHTML += `
-                    <div class="post-card">
-                        <div class="post-header">
-                            <div class="video-avatar">${p.author.charAt(0).toUpperCase()}</div>
-                            <strong>${p.author}</strong>
-                            <span style="margin-left:auto; color:#888; font-size:18px; cursor:pointer;">⋮</span>
-                        </div>
-                        <div class="post-media" style="background:${p.bg}" ondblclick="alert('Liked!')">✨</div>
-                        <div class="post-actions">
-                            <i onclick="alert('Liked!')">❤️</i>
-                            <i onclick="alert('Open comments')">💬</i>
-                            <i onclick="alert('Shared!')">↗️</i>
-                            <i style="margin-left:auto;" onclick="alert('Saved to collections')">🔖</i>
-                        </div>
-                        <div class="post-content">
-                            <span class="post-likes">${p.likes.toLocaleString()} likes</span>
-                            <div class="post-caption"><strong>${p.author}</strong> ${p.caption}</div>
-                            <div style="color:#888; font-size:13px; margin-top:8px; cursor:pointer;">View all comments</div>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        // --- 4. REAL CHAT LOGIC ---
-        function populateContacts() {
-            const chatSelect = document.getElementById('chatUserSelect');
-            const callSelect = document.getElementById('callUserSelect');
-            let optionsHTML = '<option value="">Select a user...</option>';
-            users.forEach(u => {
-                if(u.username !== currentUser) {
-                    optionsHTML += `<option value="${u.username}">@${u.username}</option>`;
-                }
-            });
-            chatSelect.innerHTML = optionsHTML;
-            callSelect.innerHTML = optionsHTML;
-        }
-
-        function getChatKey(user1, user2) { return [user1, user2].sort().join('_'); }
+        // 5. Direct Messaging System
+        let chats = {
+            "Alex_Creator": [{ who: "them", text: "Hey! What's your next video project?" }],
+            "Sara_Studio": [{ who: "them", text: "Loved your recent reel transition!" }],
+            "NeonVibe": [{ who: "them", text: "Flix.com is running super smooth." }]
+        };
 
         function toggleChat() {
-            if(!currentUser) { alert("Please log in to chat."); return; }
-            document.getElementById('chatSidebar').classList.toggle('open');
-            if(document.getElementById('chatSidebar').classList.contains('open')) {
-                loadChat();
-            }
+            document.getElementById('chatDrawer').classList.toggle('open');
+            renderConversation();
         }
 
-        function loadChat() {
-            const targetUser = document.getElementById('chatUserSelect').value;
-            const msgsDiv = document.getElementById('chatMessages');
-            
-            if(!targetUser) {
-                msgsDiv.innerHTML = '<div style="color:#666; text-align:center; margin-top:40px;">Select a user to start chatting!</div>';
-                return;
-            }
-
-            const key = getChatKey(currentUser, targetUser);
-            const history = chats[key] || [];
-
-            msgsDiv.innerHTML = '';
-            if(history.length === 0) {
-                msgsDiv.innerHTML = '<div style="color:#666; text-align:center; margin-top:40px;">No messages yet. Say hi! 👋</div>';
-            } else {
-                history.forEach(msg => {
-                    const isMe = msg.sender === currentUser;
-                    msgsDiv.innerHTML += `<div class="msg ${isMe ? 'sent' : 'received'}">${msg.text}</div>`;
-                });
-            }
-            msgsDiv.scrollTop = msgsDiv.scrollHeight; 
+        function renderConversation() {
+            const user = document.getElementById('chatContactSelect').value;
+            const box = document.getElementById('chatMessages');
+            box.innerHTML = '';
+            (chats[user] || []).forEach(m => {
+                box.innerHTML += `<div class="bubble ${m.who === 'me' ? 'me' : 'them'}">${m.text}</div>`;
+            });
+            box.scrollTop = box.scrollHeight;
         }
 
-        function sendMsg() {
-            const targetUser = document.getElementById('chatUserSelect').value;
+        function sendChatMessage() {
+            const user = document.getElementById('chatContactSelect').value;
             const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            
-            if(!targetUser) { alert('Please select a user to message from the dropdown.'); return; }
-            if(!text) return;
+            if(!input.value.trim()) return;
 
-            const key = getChatKey(currentUser, targetUser);
-            if(!chats[key]) chats[key] = [];
-            
-            chats[key].push({ sender: currentUser, text: text, timestamp: Date.now() });
-            localStorage.setItem('flix_chats', JSON.stringify(chats));
-            
+            if(!chats[user]) chats[user] = [];
+            chats[user].push({ who: "me", text: input.value });
+            const userMsg = input.value;
             input.value = '';
-            loadChat();
+            renderConversation();
+
+            // Auto reply simulator
+            setTimeout(() => {
+                chats[user].push({ who: "them", text: `Thanks for messaging! Received: "${userMsg}"` });
+                renderConversation();
+            }, 1000);
         }
 
-        // --- 5. VIDEO CALL LOGIC ---
-        function openCallSetup() {
-            if(!currentUser) { alert("Please log in to make calls."); return; }
-            document.getElementById('callSetupScreen').style.display = 'block';
-            document.getElementById('callRingingScreen').style.display = 'none';
-            openModal('callModal');
+        // UI Helpers
+        function switchTab(name) {
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.side-link').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const section = document.getElementById(`tab-${name}`);
+            if(section) section.classList.add('active');
+
+            const side = document.getElementById(`side-${name}`);
+            if(side) side.classList.add('active');
+
+            const nav = document.getElementById(`nav-${name}`);
+            if(nav) nav.classList.add('active');
         }
 
-        function startCallRinging() {
-            const target = document.getElementById('callUserSelect').value;
-            if(!target) { alert('Please select a user to call.'); return; }
-
-            document.getElementById('callSetupScreen').style.display = 'none';
-            document.getElementById('callRingingScreen').style.display = 'block';
-            
-            document.getElementById('callingName').innerText = "@" + target;
-            document.getElementById('callingAvatar').innerText = target.charAt(0).toUpperCase();
-        }
-
-        // --- UTILS ---
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeModal(id) { 
+            document.getElementById(id).style.display = 'none'; 
+            if(id === 'storyViewerModal') clearInterval(storyTimer);
+        }
 
-        // Init App
-        updateAuthUI();
-        renderUI();
+        function openCallModal() { openModal('callModal'); }
+        function handleAuthPrompt() { alert("You are signed in as verified creator: @You"); }
+
+        function filterContent(query) {
+            const q = query.toLowerCase();
+            document.querySelectorAll('.v-card, .r-card, .post-card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        function renderAll() {
+            renderStories();
+            renderVideos();
+            renderReels();
+            renderPosts();
+        }
+
+        // Initialize application on load
+        renderAll();
     </script>
 </body>
 </html>
