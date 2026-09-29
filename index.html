@@ -136,7 +136,7 @@
 </head>
 <body>
 
-    <!-- MANDOATARY AUTH SCREEN -->
+    <!-- MANDATORY AUTH SCREEN -->
     <div id="authScreen">
         <h1 class="logo" style="font-size: 40px; margin-bottom: 30px;">FLIX.COM</h1>
         <div class="auth-box">
@@ -216,7 +216,18 @@
 
                 <!-- Admin Tab -->
                 <section id="tab-admin" class="tab-section">
-                    <div class="section-header" style="color: var(--admin-gold);">👑 Admin Dashboard - User Control</div>
+                    <div class="section-header" style="color: var(--admin-gold);">👑 Admin Dashboard</div>
+                    
+                    <!-- NEW DEVELOPER TOOLS -->
+                    <div style="background: #1c1c24; padding: 15px; border-radius: 8px; border: 1px solid var(--admin-gold); margin-bottom: 20px;">
+                        <h4 style="color: var(--admin-gold); margin-bottom: 12px; font-size: 14px;">Developer Tools</h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a href="https://drive.google.com" target="_blank" class="create-btn" style="text-decoration: none;">☁️ Go to Google Drive</a>
+                            <button class="create-btn" onclick="fixAllLinksInDb()">🔧 Make Links Working</button>
+                        </div>
+                    </div>
+                
+                    <div class="section-header" style="color: var(--admin-gold); font-size: 16px;">User Control</div>
                     <div class="admin-user-list" id="adminUserList"></div>
                 </section>
             </main>
@@ -549,14 +560,53 @@
             renderAdminUsers();
         }
 
+        // --- DEVELOPER TOOLS: Auto-convert Drive Links ---
+        function fixDriveLink(url) {
+            if (!url) return url;
+            // Extract the video ID from a standard Google Drive link
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                // Convert to a direct download link that works in <video> tags
+                return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+            }
+            return url;
+        }
+
+        function fixAllLinksInDb() {
+            if (currentUser?.role !== 'admin') return;
+            
+            let updatedCount = 0;
+            const fixArray = (arr) => {
+                arr.forEach(item => {
+                    if (item.videoData && item.videoData.includes('drive.google.com/file/d/')) {
+                        item.videoData = fixDriveLink(item.videoData);
+                        updatedCount++;
+                    }
+                });
+            };
+
+            fixArray(db.videos);
+            fixArray(db.reels);
+            fixArray(db.posts);
+
+            if (updatedCount > 0) {
+                saveDb(); 
+                renderAll(); 
+                alert(`Developer Alert: Successfully fixed ${updatedCount} broken video links for everyone!`);
+            } else {
+                alert("All links are already working, or no Drive links were found.");
+            }
+        }
+
         // --- 7. UPLOAD / PUBLISH LOGIC ---
         function handlePublish() {
             const type = document.getElementById('upType').value;
             const title = document.getElementById('upTitle').value || "New Post";
             const isWorldwide = document.getElementById('adminBroadcastCheck')?.checked || false;
             
-            // Just grab the text link they pasted!
-            const videoUrl = document.getElementById('upFile').value.trim();
+            // Grab the text link and pass it through the fixer function
+            let videoUrl = document.getElementById('upFile').value.trim();
+            videoUrl = fixDriveLink(videoUrl); // <-- THIS FIXES IT AUTOMATICALLY
 
             finalizePublish(type, title, isWorldwide, videoUrl || null);
         }
