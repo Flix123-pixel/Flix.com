@@ -127,6 +127,8 @@
             .bottom-nav { display: flex; }
             main.main-viewport { padding: 12px 10px 70px 10px; }
             .search-bar { display: none; }
+            /* Hide extra header buttons on mobile to save space */
+            .hide-mobile { display: none !important; }
         }
     </style>
     
@@ -171,7 +173,10 @@
                 <button>🔍</button>
             </div>
             <div class="header-actions">
-                <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="create-btn wiki-btn">📖 <span>Our Wiki</span></a>
+                <!-- NEW PUBLIC BUTTONS -->
+                <a href="https://drive.google.com" target="_blank" class="create-btn wiki-btn hide-mobile">☁️ <span>Drive</span></a>
+                <button class="create-btn hide-mobile" style="background: #202028; border: 1px solid var(--secondary); color: var(--secondary);" onclick="openModal('botModal')">🤖 <span>Link Bot</span></button>
+                
                 <button class="create-btn" onclick="openModal('uploadModal')">➕ <span>Create</span></button>
                 <div class="profile-badge" id="myAvatar" onclick="logout()" title="Log Out">U</div>
             </div>
@@ -187,6 +192,8 @@
                 
                 <div style="height: 1px; background: var(--border); margin: 10px 0;"></div>
                 
+                <div class="side-link" onclick="openModal('botModal')" style="color: var(--secondary);">🤖 <span>Link Bot Fixer</span></div>
+                <a href="https://drive.google.com" target="_blank" class="side-link" style="color: #00c6ff;">☁️ <span>Google Drive</span></a>
                 <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="side-link" style="color: var(--text-main);">📖 <span>Our Wiki</span></a>
                 <div class="side-link" onclick="logout()" style="color: #ff4444;">🚪 <span>Log Out</span></div>
             </aside>
@@ -218,12 +225,10 @@
                 <section id="tab-admin" class="tab-section">
                     <div class="section-header" style="color: var(--admin-gold);">👑 Admin Dashboard</div>
                     
-                    <!-- NEW DEVELOPER TOOLS -->
                     <div style="background: #1c1c24; padding: 15px; border-radius: 8px; border: 1px solid var(--admin-gold); margin-bottom: 20px;">
                         <h4 style="color: var(--admin-gold); margin-bottom: 12px; font-size: 14px;">Developer Tools</h4>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <a href="https://drive.google.com" target="_blank" class="create-btn" style="text-decoration: none;">☁️ Go to Google Drive</a>
-                            <button class="create-btn" onclick="fixAllLinksInDb()">🔧 Make Links Working</button>
+                            <button class="create-btn" onclick="fixAllLinksInDb()">🔧 Auto-Fix All Database Links</button>
                         </div>
                     </div>
                 
@@ -238,9 +243,32 @@
             <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i>🏠</i><span>Home</span></div>
             <div class="nav-item" id="nav-reels" onclick="switchTab('reels')"><i>📱</i><span>Reels</span></div>
             <div class="nav-item" onclick="openModal('uploadModal')"><i style="font-size: 24px;">➕</i><span>Post</span></div>
-            <div class="nav-item" id="nav-feed" onclick="switchTab('feed')"><i>📸</i><span>Feed</span></div>
+            <div class="nav-item" onclick="openModal('botModal')"><i style="font-size: 18px; color: var(--secondary);">🤖</i><span>Bot</span></div>
             <div class="nav-item admin-link" id="nav-admin" onclick="switchTab('admin')"><i>👑</i><span>Admin</span></div>
         </nav>
+    </div>
+
+    <!-- LINK BOT MODAL (For Everyone) -->
+    <div class="modal-screen" id="botModal">
+        <div class="modal-window" style="max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: var(--secondary);">🤖 Link Bot</h3>
+                <button class="close-btn" onclick="closeModal('botModal')">✕</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5;">Give me your broken Google Drive link, and I'll give you a working MP4 stream link ready for Flix!</p>
+                
+                <input type="text" id="botInputUrl" placeholder="Paste standard Drive link here..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                
+                <button class="create-btn" style="width: 100%; justify-content: center; padding: 12px; background: var(--secondary); color: #000;" onclick="runLinkBot()">Convert Link ⚡</button>
+
+                <div id="botResultBox" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; background: #1a1a00; padding: 12px; border-radius: 8px; border: 1px solid var(--secondary);">
+                    <label style="font-size: 12px; color: var(--secondary); font-weight: bold;">Here is your working link:</label>
+                    <textarea id="botOutputUrl" readonly rows="3" style="padding: 10px; background: #101014; border: 1px solid #444; border-radius: 6px; color: #00c6ff; resize: none;"></textarea>
+                    <button class="create-btn" style="justify-content: center; padding: 8px;" onclick="copyBotLink()">📋 Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- UPLOAD MODAL -->
@@ -259,7 +287,6 @@
                     <option value="story">Story</option>
                 </select>
 
-                <!-- CHANGED TO URL INPUT -->
                 <label style="font-size: 12px; color: var(--text-sub);">Video Link (Paste an MP4 URL)</label>
                 <input type="text" id="upFile" placeholder="Paste video link here..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
 
@@ -310,9 +337,7 @@
 
         async function saveDb() {
             try {
-                // Save everything to the Firebase Cloud
                 await dbRef.set(db);
-                // Save your personal login state locally
                 localStorage.setItem('flix_currentUser_v3', JSON.stringify(currentUser));
             } catch (e) {
                 console.error(e);
@@ -560,18 +585,46 @@
             renderAdminUsers();
         }
 
-        // --- DEVELOPER TOOLS: Auto-convert Drive Links ---
+        // --- LINK BOT UTILITIES ---
         function fixDriveLink(url) {
             if (!url) return url;
-            // Extract the video ID from a standard Google Drive link
             const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
             if (match && match[1]) {
-                // Convert to a direct download link that works in <video> tags
                 return `https://drive.google.com/uc?export=download&id=${match[1]}`;
             }
             return url;
         }
 
+        function runLinkBot() {
+            const rawUrl = document.getElementById('botInputUrl').value.trim();
+            const resultBox = document.getElementById('botResultBox');
+            const outputArea = document.getElementById('botOutputUrl');
+
+            if (!rawUrl) {
+                alert("Please paste a link first!");
+                return;
+            }
+
+            const fixedLink = fixDriveLink(rawUrl);
+            
+            if (fixedLink === rawUrl && !rawUrl.includes('drive.google.com/uc')) {
+                alert("Hmm, that doesn't look like a standard Google Drive video link. Make sure it contains '/d/YOUR_VIDEO_ID/'.");
+                resultBox.style.display = 'none';
+            } else {
+                outputArea.value = fixedLink;
+                resultBox.style.display = 'flex';
+            }
+        }
+
+        function copyBotLink() {
+            const copyText = document.getElementById("botOutputUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(copyText.value);
+            alert("Copied to clipboard!");
+        }
+
+        // Admin-only tool to bulk fix database
         function fixAllLinksInDb() {
             if (currentUser?.role !== 'admin') return;
             
@@ -592,7 +645,7 @@
             if (updatedCount > 0) {
                 saveDb(); 
                 renderAll(); 
-                alert(`Developer Alert: Successfully fixed ${updatedCount} broken video links for everyone!`);
+                alert(`Developer Alert: Successfully fixed ${updatedCount} broken video links!`);
             } else {
                 alert("All links are already working, or no Drive links were found.");
             }
@@ -604,9 +657,9 @@
             const title = document.getElementById('upTitle').value || "New Post";
             const isWorldwide = document.getElementById('adminBroadcastCheck')?.checked || false;
             
-            // Grab the text link and pass it through the fixer function
             let videoUrl = document.getElementById('upFile').value.trim();
-            videoUrl = fixDriveLink(videoUrl); // <-- THIS FIXES IT AUTOMATICALLY
+            // Automatically fix the link if they paste a raw drive link directly into the uploader
+            videoUrl = fixDriveLink(videoUrl); 
 
             finalizePublish(type, title, isWorldwide, videoUrl || null);
         }
@@ -642,12 +695,11 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         // Start App
-        // Read from DB right away to initialize
         dbRef.get().then((doc) => {
             if (doc.exists) { db = doc.data(); }
             initApp();
         }).catch(() => {
-            initApp(); // fallback if empty
+            initApp();
         });
 
     </script>
