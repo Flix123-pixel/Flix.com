@@ -3,131 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Flix.com - All-in-One Social & Video</title>
+    <title>Flix.com - Cyberpunk Edition</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;900&display=swap');
+
         :root {
-            --primary: #ff0055;
-            --secondary: #ffaa00;
-            --bg-dark: #0a0a0c;
-            --card-dark: #141418;
-            --border: #26262e;
-            --text-main: #f4f4f6;
-            --text-sub: #9090a0;
-            --admin-gold: #ffd700;
+            --primary: #00f3ff;
+            --secondary: #ff00ea;
+            --bg-dark: #050508;
+            --glass: rgba(15, 15, 25, 0.65);
+            --border: rgba(0, 243, 255, 0.25);
+            --text-main: #e0faff;
+            --text-sub: #7a94a5;
+            --admin-gold: #ffea00;
+            --live-red: #ff0044;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            background-image: radial-gradient(circle at 50% 0%, #1a0b2e 0%, var(--bg-dark) 60%);
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
 
         /* Full Screen Auth Overlay */
         #authScreen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        .auth-box { background: var(--card-dark); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 400px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-        .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--text-sub); font-weight: bold; transition: 0.2s; }
-        .auth-tab.active { color: var(--secondary); border-bottom: 2px solid var(--secondary); }
-        .auth-form { display: none; flex-direction: column; gap: 16px; }
+        .auth-box { border-radius: 20px; width: 90%; max-width: 400px; padding: 35px; border: 2px solid var(--primary); box-shadow: 0 0 25px rgba(0, 243, 255, 0.2); }
+        .auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid var(--border); }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: var(--text-sub); font-weight: bold; font-size: 18px; transition: 0.3s; letter-spacing: 1px; }
+        .auth-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .auth-form { display: none; flex-direction: column; gap: 18px; }
         .auth-form.active { display: flex; }
-        .auth-form input { padding: 12px; background: #1c1c24; border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; font-size: 14px; }
-        .auth-form input:focus { border-color: var(--secondary); }
-        .auth-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .auth-form input { padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; font-size: 16px; transition: 0.3s; }
+        .auth-form input:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(255, 0, 234, 0.3); }
+        .auth-btn { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: 900; font-size: 18px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.2s; }
+        .auth-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px var(--secondary); }
 
         /* Top Header */
-        header { height: 60px; background: #101014; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 100; transition: border-bottom 0.3s; }
-        body.admin-mode header { border-bottom: 2px solid var(--admin-gold); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1); }
-        .logo { font-size: 22px; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: -0.5px; }
-        body.admin-mode .logo { background: linear-gradient(45deg, var(--admin-gold), #ffaa00); -webkit-background-clip: text; }
+        header { height: 65px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 100; }
+        body.admin-mode header { border-bottom: 2px solid var(--admin-gold); box-shadow: 0 0 15px rgba(255, 234, 0, 0.2); }
+        .logo { font-size: 28px; font-weight: 900; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+        body.admin-mode .logo { background: linear-gradient(90deg, var(--admin-gold), #ff5e00); -webkit-background-clip: text; }
         
-        .search-bar { display: flex; flex: 0 1 450px; margin: 0 12px; }
-        .search-bar input { width: 100%; padding: 8px 14px; background: #1c1c24; border: 1px solid var(--border); border-radius: 20px 0 0 20px; color: #fff; outline: none; font-size: 13px; }
-        .search-bar button { padding: 8px 16px; background: #262630; border: 1px solid var(--border); border-left: none; border-radius: 0 20px 20px 0; color: #fff; cursor: pointer; }
-
-        .header-actions { display: flex; align-items: center; gap: 10px; }
-        .create-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; text-decoration: none; }
-        .wiki-btn { background: #262630; border: 1px solid var(--border); color: #fff; }
-        body.admin-mode .create-btn:not(.wiki-btn) { background: linear-gradient(45deg, #000, var(--admin-gold)); color: #000; }
-        .profile-badge { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(45deg, #00c6ff, #0072ff); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; position: relative; }
-        body.admin-mode .profile-badge { background: linear-gradient(45deg, var(--admin-gold), #ffaa00); color: #000; box-shadow: 0 0 10px var(--admin-gold); }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .create-btn { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #000; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; text-transform: uppercase; transition: 0.2s; box-shadow: 0 0 10px rgba(255, 0, 234, 0.4); }
+        .create-btn:hover { box-shadow: 0 0 20px var(--primary); }
+        .profile-badge { width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; cursor: pointer; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
 
         /* Container & Layout */
-        .app-body { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; position: relative; }
+        .app-body { display: flex; flex: 1; height: calc(100vh - 65px); overflow: hidden; position: relative; }
         
         /* Desktop Sidebar */
-        aside.sidebar { width: 220px; background: #101014; border-right: 1px solid var(--border); padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
-        .side-link { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; color: var(--text-sub); cursor: pointer; font-size: 14px; font-weight: 600; text-decoration: none; transition: 0.15s; }
-        .side-link:hover { background: #1a1a22; color: #fff; }
-        .side-link.active { background: #262632; color: #fff; }
+        aside.sidebar { width: 240px; border-right: 1px solid var(--border); padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .side-link { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 12px; color: var(--text-sub); cursor: pointer; font-size: 16px; font-weight: 700; text-decoration: none; transition: 0.2s; letter-spacing: 1px; border: 1px solid transparent; }
+        .side-link:hover { background: rgba(0, 243, 255, 0.1); color: var(--primary); border-color: rgba(0, 243, 255, 0.3); }
+        .side-link.active { background: rgba(255, 0, 234, 0.15); color: var(--text-main); border-color: var(--secondary); box-shadow: inset 0 0 10px rgba(255,0,234,0.2); }
         .admin-link { display: none; color: var(--admin-gold); }
         body.admin-mode .admin-link { display: flex; }
 
         /* Main Viewport */
-        main.main-viewport { flex: 1; overflow-y: auto; padding: 16px; position: relative; }
+        main.main-viewport { flex: 1; overflow-y: auto; padding: 20px; position: relative; }
 
         /* Mobile Bottom Bar */
-        .bottom-nav { display: none; height: 55px; background: #101014; border-top: 1px solid var(--border); position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; justify-content: space-around; align-items: center; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--text-sub); cursor: pointer; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        body.admin-mode .nav-item.active { color: var(--admin-gold); }
-        .nav-item i { font-style: normal; font-size: 18px; }
+        .bottom-nav { display: none; height: 65px; border-top: 1px solid var(--border); position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--text-sub); cursor: pointer; font-weight: 700; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .nav-item i { font-style: normal; font-size: 20px; }
 
         /* Stories Row */
-        .stories-bar { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; scrollbar-width: none; }
+        .stories-bar { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; scrollbar-width: none; }
         .stories-bar::-webkit-scrollbar { display: none; }
-        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-width: 68px; }
-        .ring { width: 62px; height: 62px; border-radius: 50%; background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); padding: 2.5px; display: flex; align-items: center; justify-content: center; }
-        .ring-avatar { width: 100%; height: 100%; border-radius: 50%; background: #202028; border: 2px solid var(--bg-dark); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
-        .story-name { font-size: 11px; color: var(--text-sub); width: 64px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .ring { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--secondary)); padding: 3px; box-shadow: 0 0 15px rgba(255,0,234,0.4); }
+        .ring-avatar { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 22px; color: var(--primary); }
+        .story-name { font-size: 13px; font-weight: 700; width: 70px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Grids & Cards */
+        /* Grids & Sections */
         .tab-section { display: none; }
-        .tab-section.active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .section-header { font-size: 18px; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .tab-section.active { display: block; animation: neonFade 0.3s ease; }
+        @keyframes neonFade { from { opacity: 0; transform: translateY(10px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        
+        .section-header { font-size: 24px; font-weight: 900; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; text-transform: uppercase; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-sub); font-size: 18px; font-weight: 700; border: 1px dashed var(--border); border-radius: 12px; margin-top: 20px; }
 
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-sub); }
-
-        /* YouTube Grid */
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 30px; }
-        .v-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: var(--card-dark); border: 1px solid var(--border); transition: transform 0.15s; }
-        .v-card:hover { transform: translateY(-3px); }
-        .v-thumb { width: 100%; aspect-ratio: 16/9; background: #252530; display: flex; align-items: center; justify-content: center; position: relative; font-size: 32px; background-size: cover; background-position: center; }
-        .v-time { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .v-meta { padding: 12px; display: flex; gap: 10px; }
-        .v-avatar { width: 34px; height: 34px; border-radius: 50%; background: #343444; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 13px; }
-        .v-info h4 { font-size: 14px; line-height: 1.3; margin-bottom: 4px; }
-        .v-info p { font-size: 12px; color: var(--text-sub); }
-        .admin-badge { background: var(--admin-gold); color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; }
+        /* Video Grid & Cards */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .v-card { border-radius: 16px; overflow: hidden; transition: 0.3s; }
+        .v-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2); border-color: var(--primary); }
+        .v-thumb { width: 100%; aspect-ratio: 16/9; background: #000; border-bottom: 1px solid var(--border); }
+        .v-meta { padding: 15px; display: flex; gap: 12px; }
+        .v-info h4 { font-size: 16px; line-height: 1.4; margin-bottom: 6px; font-weight: 700; }
+        .v-info p { font-size: 13px; color: var(--primary); font-weight: 700; letter-spacing: 1px; }
+        
+        .live-badge { background: var(--live-red); color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 900; box-shadow: 0 0 10px var(--live-red); animation: pulse 1.5s infinite; margin-left: 6px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
         /* Reels Grid */
-        .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
-        .r-card { aspect-ratio: 9/16; border-radius: 14px; overflow: hidden; position: relative; cursor: pointer; background: #222; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
-        .r-card:hover { transform: scale(1.02); }
-        .r-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; background-size: cover; background-position: center; }
-        .r-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%); display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; pointer-events: none; }
+        .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .r-card { aspect-ratio: 9/16; border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; border: 1px solid var(--border); }
+        .r-card:hover { border-color: var(--secondary); box-shadow: 0 0 20px rgba(255, 0, 234, 0.3); }
+        .r-bg { width: 100%; height: 100%; background: #000; }
+        .r-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; pointer-events: none; }
+        .r-overlay strong { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
 
-        /* Social Posts Feed */
-        .feed-wrap { max-width: 540px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .post-card { background: var(--card-dark); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .post-top { padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
-        .post-media { width: 100%; aspect-ratio: 1/1; background: #232330; display: flex; align-items: center; justify-content: center; font-size: 48px; background-size: cover; background-position: center; overflow: hidden; }
-        .post-actions { padding: 10px 14px; display: flex; gap: 16px; font-size: 20px; }
-        .post-caption-box { padding: 0 14px 12px 14px; font-size: 13px; line-height: 1.4; }
+        /* Feed Posts */
+        .feed-wrap { max-width: 580px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
+        .post-card { border-radius: 16px; overflow: hidden; }
+        .post-top { padding: 15px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .post-media { width: 100%; aspect-ratio: 1/1; background: #000; }
+        .post-caption-box { padding: 15px; font-size: 15px; line-height: 1.5; font-weight: 500; }
 
-        /* Admin Users Panel */
-        .admin-user-list { display: flex; flex-direction: column; gap: 10px; }
-        .admin-user-card { background: #1c1c24; padding: 12px; border-radius: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        /* Modals */
+        .modal-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-window { border-radius: 20px; width: 92%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 25px; border: 1px solid var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); }
+        .close-btn { background: none; border: none; color: var(--primary); font-size: 28px; cursor: pointer; transition: 0.2s; }
+        .close-btn:hover { color: var(--secondary); text-shadow: 0 0 10px var(--secondary); transform: scale(1.1); }
 
-        /* Modals & Overlays */
-        .modal-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-window { background: #16161c; border: 1px solid var(--border); border-radius: 14px; width: 92%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; }
-        .close-btn { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; }
-
-        /* Mobile Adjustments */
         @media (max-width: 768px) {
             aside.sidebar { display: none; }
             .bottom-nav { display: flex; }
-            main.main-viewport { padding: 12px 10px 70px 10px; }
-            .search-bar { display: none; }
-            /* Hide extra header buttons on mobile to save space */
+            main.main-viewport { padding: 15px 15px 85px 15px; }
             .hide-mobile { display: none !important; }
         }
     </style>
@@ -138,64 +147,52 @@
 </head>
 <body>
 
-    <!-- MANDATORY AUTH SCREEN -->
+    <!-- AUTH SCREEN -->
     <div id="authScreen">
-        <h1 class="logo" style="font-size: 40px; margin-bottom: 30px;">FLIX.COM</h1>
-        <div class="auth-box">
+        <h1 class="logo" style="font-size: 50px; margin-bottom: 40px;">FLIX.CYBER</h1>
+        <div class="auth-box glass-panel">
             <div class="auth-tabs">
-                <div class="auth-tab" id="tabLogin" onclick="switchAuth('login')">Log In</div>
-                <div class="auth-tab active" id="tabSignup" onclick="switchAuth('signup')">Sign Up</div>
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuth('login')">SYSTEM LOGIN</div>
+                <div class="auth-tab" id="tabSignup" onclick="switchAuth('signup')">NEW USER</div>
             </div>
-
-            <!-- Login Form -->
-            <div class="auth-form" id="formLogin">
-                <input type="text" id="loginUser" placeholder="Username">
-                <input type="password" id="loginPass" placeholder="Password">
-                <button class="auth-btn" onclick="processAuth('login')">Log In</button>
+            <div class="auth-form active" id="formLogin">
+                <input type="text" id="loginUser" placeholder="Enter Username">
+                <input type="password" id="loginPass" placeholder="Enter Password">
+                <button class="auth-btn" onclick="processAuth('login')">Initialize</button>
             </div>
-
-            <!-- Sign Up Form -->
-            <div class="auth-form active" id="formSignup">
-                <input type="text" id="signupUser" placeholder="Choose a username">
-                <input type="password" id="signupPass" placeholder="Create a password">
-                <button class="auth-btn" onclick="processAuth('signup')">Create Account</button>
+            <div class="auth-form" id="formSignup">
+                <input type="text" id="signupUser" placeholder="Choose Username">
+                <input type="password" id="signupPass" placeholder="Create Password">
+                <button class="auth-btn" onclick="processAuth('signup')">Register</button>
             </div>
         </div>
     </div>
 
     <!-- MAIN APP WRAPPER -->
-    <div id="appWrapper" style="display: none; height: 100vh; flex-direction: column;">
+    <div id="appWrapper" style="display: none;">
         <!-- Header -->
-        <header>
-            <a href="#" class="logo" onclick="switchTab('home')">FLIX.COM</a>
-            <div class="search-bar">
-                <input type="text" placeholder="Search content...">
-                <button>🔍</button>
-            </div>
+        <header class="glass-panel">
+            <a href="#" class="logo" onclick="switchTab('home')">FLIX</a>
             <div class="header-actions">
-                <!-- NEW PUBLIC BUTTONS -->
-                <a href="https://drive.google.com" target="_blank" class="create-btn wiki-btn hide-mobile">☁️ <span>Drive</span></a>
-                <button class="create-btn hide-mobile" style="background: #202028; border: 1px solid var(--secondary); color: var(--secondary);" onclick="openModal('botModal')">🤖 <span>Link Bot</span></button>
-                
-                <button class="create-btn" onclick="openModal('uploadModal')">➕ <span>Create</span></button>
+                <button class="create-btn hide-mobile" style="background: transparent; border: 1px solid var(--secondary); color: var(--secondary);" onclick="openModal('botModal')">🤖 Link Bot</button>
+                <button class="create-btn" onclick="openModal('uploadModal')">➕ UPLOAD</button>
                 <div class="profile-badge" id="myAvatar" onclick="logout()" title="Log Out">U</div>
             </div>
         </header>
 
         <div class="app-body">
             <!-- Sidebar Navigation -->
-            <aside class="sidebar">
-                <div class="side-link active" id="side-home" onclick="switchTab('home')">🏠 <span>Home</span></div>
-                <div class="side-link" id="side-reels" onclick="switchTab('reels')">📱 <span>Reels</span></div>
-                <div class="side-link" id="side-feed" onclick="switchTab('feed')">📸 <span>Social Feed</span></div>
-                <div class="side-link admin-link" id="side-admin" onclick="switchTab('admin')">👑 <span>Admin Panel</span></div>
+            <aside class="sidebar glass-panel">
+                <div class="side-link active" id="side-home" onclick="switchTab('home')">🏠 HOME</div>
+                <div class="side-link" id="side-reels" onclick="switchTab('reels')">📱 REELS</div>
+                <div class="side-link" id="side-feed" onclick="switchTab('feed')">📸 FEED</div>
+                <div class="side-link" id="side-live" onclick="switchTab('live')" style="color: var(--live-red); text-shadow: 0 0 10px var(--live-red);">🔴 LIVE NOW</div>
+                <div class="side-link admin-link" id="side-admin" onclick="switchTab('admin')">👑 ADMIN</div>
                 
-                <div style="height: 1px; background: var(--border); margin: 10px 0;"></div>
+                <div style="height: 1px; background: var(--border); margin: 15px 0;"></div>
                 
-                <div class="side-link" onclick="openModal('botModal')" style="color: var(--secondary);">🤖 <span>Link Bot Fixer</span></div>
-                <a href="https://drive.google.com" target="_blank" class="side-link" style="color: #00c6ff;">☁️ <span>Google Drive</span></a>
-                <a href="https://github.com/Flix123-pixel/Flix.com.wiki.git" target="_blank" class="side-link" style="color: var(--text-main);">📖 <span>Our Wiki</span></a>
-                <div class="side-link" onclick="logout()" style="color: #ff4444;">🚪 <span>Log Out</span></div>
+                <div class="side-link" onclick="openModal('botModal')" style="color: var(--secondary);">🤖 LINK FIXER</div>
+                <div class="side-link" onclick="logout()" style="color: #ff4444; margin-top: auto;">🚪 DISCONNECT</div>
             </aside>
 
             <!-- Main Viewport -->
@@ -205,67 +202,66 @@
 
                 <!-- Home Tab -->
                 <section id="tab-home" class="tab-section active">
-                    <div class="section-header">▶️ Recommended Videos</div>
+                    <div class="section-header">▶️ SYSTEM_VIDEOS</div>
                     <div class="video-grid" id="videoGrid"></div>
+                </section>
+
+                <!-- Live Tab (NEW) -->
+                <section id="tab-live" class="tab-section">
+                    <div class="section-header" style="color: var(--live-red); border-left-color: var(--live-red);">🔴 ACTIVE BROADCASTS</div>
+                    <div class="video-grid" id="liveGrid"></div>
                 </section>
 
                 <!-- Reels Tab -->
                 <section id="tab-reels" class="tab-section">
-                    <div class="section-header">📱 Trending Reels</div>
+                    <div class="section-header">📱 NEON_SHORTS</div>
                     <div class="reels-grid" id="reelsGrid"></div>
                 </section>
 
                 <!-- Feed Tab -->
                 <section id="tab-feed" class="tab-section">
-                    <div class="section-header" style="justify-content: center;">📸 Community Posts</div>
+                    <div class="section-header">📸 SOCIAL_NET</div>
                     <div class="feed-wrap" id="feedWrap"></div>
                 </section>
 
                 <!-- Admin Tab -->
                 <section id="tab-admin" class="tab-section">
-                    <div class="section-header" style="color: var(--admin-gold);">👑 Admin Dashboard</div>
-                    
-                    <div style="background: #1c1c24; padding: 15px; border-radius: 8px; border: 1px solid var(--admin-gold); margin-bottom: 20px;">
-                        <h4 style="color: var(--admin-gold); margin-bottom: 12px; font-size: 14px;">Developer Tools</h4>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="create-btn" onclick="fixAllLinksInDb()">🔧 Auto-Fix All Database Links</button>
-                        </div>
+                    <div class="section-header" style="color: var(--admin-gold); border-left-color: var(--admin-gold);">👑 OVERSEER PROTOCOL</div>
+                    <div class="glass-panel" style="padding: 20px; border-radius: 12px; border-color: var(--admin-gold); margin-bottom: 20px;">
+                        <h4 style="color: var(--admin-gold); margin-bottom: 15px;">Developer Tools</h4>
+                        <button class="create-btn" onclick="fixAllLinksInDb()">🔧 Execute Auto-Fix DB</button>
                     </div>
-                
-                    <div class="section-header" style="color: var(--admin-gold); font-size: 16px;">User Control</div>
-                    <div class="admin-user-list" id="adminUserList"></div>
+                    <div class="section-header" style="font-size: 18px; color: var(--admin-gold);">User Directory</div>
+                    <div id="adminUserList" style="display:flex; flex-direction:column; gap:10px;"></div>
                 </section>
             </main>
         </div>
 
         <!-- Mobile Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i>🏠</i><span>Home</span></div>
-            <div class="nav-item" id="nav-reels" onclick="switchTab('reels')"><i>📱</i><span>Reels</span></div>
-            <div class="nav-item" onclick="openModal('uploadModal')"><i style="font-size: 24px;">➕</i><span>Post</span></div>
-            <div class="nav-item" onclick="openModal('botModal')"><i style="font-size: 18px; color: var(--secondary);">🤖</i><span>Bot</span></div>
-            <div class="nav-item admin-link" id="nav-admin" onclick="switchTab('admin')"><i>👑</i><span>Admin</span></div>
+        <nav class="bottom-nav glass-panel">
+            <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i>🏠</i><span>HOME</span></div>
+            <div class="nav-item" id="nav-reels" onclick="switchTab('reels')"><i>📱</i><span>REELS</span></div>
+            <div class="nav-item" onclick="openModal('uploadModal')"><i style="font-size: 26px; color: var(--primary); text-shadow: 0 0 10px var(--primary);">➕</i><span>UPLOAD</span></div>
+            <div class="nav-item" id="nav-live" onclick="switchTab('live')"><i style="color: var(--live-red); text-shadow: 0 0 10px var(--live-red);">🔴</i><span style="color:var(--live-red)">LIVE</span></div>
+            <div class="nav-item" id="nav-feed" onclick="switchTab('feed')"><i>📸</i><span>FEED</span></div>
         </nav>
     </div>
 
-    <!-- LINK BOT MODAL (For Everyone) -->
+    <!-- LINK BOT MODAL -->
     <div class="modal-screen" id="botModal">
-        <div class="modal-window" style="max-width: 400px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="color: var(--secondary);">🤖 Link Bot</h3>
+        <div class="modal-window glass-panel" style="max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--secondary); font-size: 24px; font-weight: 900;">🤖 BOT_FIXER</h3>
                 <button class="close-btn" onclick="closeModal('botModal')">✕</button>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5;">Give me your broken Google Drive link, and I'll give you a working MP4 stream link ready for Flix!</p>
-                
-                <input type="text" id="botInputUrl" placeholder="Paste standard Drive link here..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
-                
-                <button class="create-btn" style="width: 100%; justify-content: center; padding: 12px; background: var(--secondary); color: #000;" onclick="runLinkBot()">Convert Link ⚡</button>
-
-                <div id="botResultBox" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; background: #1a1a00; padding: 12px; border-radius: 8px; border: 1px solid var(--secondary);">
-                    <label style="font-size: 12px; color: var(--secondary); font-weight: bold;">Here is your working link:</label>
-                    <textarea id="botOutputUrl" readonly rows="3" style="padding: 10px; background: #101014; border: 1px solid #444; border-radius: 6px; color: #00c6ff; resize: none;"></textarea>
-                    <button class="create-btn" style="justify-content: center; padding: 8px;" onclick="copyBotLink()">📋 Copy to Clipboard</button>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <p style="color: var(--text-sub); font-weight: 600;">Input broken Google Drive link below to convert to Direct Stream protocol.</p>
+                <input type="text" id="botInputUrl" placeholder="Paste Drive link..." style="padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
+                <button class="auth-btn" style="padding: 12px;" onclick="runLinkBot()">Convert ⚡</button>
+                <div id="botResultBox" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: rgba(255,0,234,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--secondary);">
+                    <label style="color: var(--secondary); font-weight: bold;">Stream URL generated:</label>
+                    <textarea id="botOutputUrl" readonly rows="3" style="padding: 10px; background: #000; border: 1px solid #444; border-radius: 6px; color: var(--primary); resize: none; font-family: monospace;"></textarea>
+                    <button class="create-btn" style="justify-content: center;" onclick="copyBotLink()">📋 Copy URL</button>
                 </div>
             </div>
         </div>
@@ -273,38 +269,39 @@
 
     <!-- UPLOAD MODAL -->
     <div class="modal-screen" id="uploadModal">
-        <div class="modal-window">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3>Create Post</h3>
+        <div class="modal-window glass-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 24px; font-weight: 900; color: var(--primary);">INITIATE UPLOAD</h3>
                 <button class="close-btn" onclick="closeModal('uploadModal')">✕</button>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <label style="font-size: 12px; color: var(--text-sub);">Select Format</label>
-                <select id="upType" style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
-                    <option value="video">Long Video</option>
-                    <option value="reel">Reel / Short</option>
-                    <option value="post">Feed Post</option>
-                    <option value="story">Story</option>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <label style="color: var(--text-sub); font-weight: 700;">Broadcast Type</label>
+                <select id="upType" style="padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-weight: 700; font-size: 16px;">
+                    <option value="video">Standard Video</option>
+                    <option value="reel">Neon Short (Reel)</option>
+                    <option value="live">🔴 LIVE STREAM (YouTube Live)</option>
+                    <option value="post">Social Feed Post</option>
+                    <option value="story">Temporary Story</option>
                 </select>
 
-                <label style="font-size: 12px; color: var(--text-sub);">Video Link (Paste an MP4 URL)</label>
-                <input type="text" id="upFile" placeholder="Paste video link here..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                <label style="color: var(--text-sub); font-weight: 700;">Media Link (YouTube or Drive MP4)</label>
+                <input type="text" id="upFile" placeholder="Paste URL here..." style="padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
 
-                <label style="font-size: 12px; color: var(--text-sub);">Caption</label>
-                <input type="text" id="upTitle" placeholder="Write caption or title..." style="padding: 10px; background: #202028; border: 1px solid var(--border); border-radius: 6px; color: #fff;">
+                <label style="color: var(--text-sub); font-weight: 700;">Transmission Caption</label>
+                <input type="text" id="upTitle" placeholder="Enter text..." style="padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 8px; color: #fff;">
 
-                <div id="adminBroadcastDiv" style="display: none; align-items: center; gap: 10px; margin-top: 5px; background: #2a2000; padding: 10px; border-radius: 6px; border: 1px solid var(--admin-gold);">
+                <div id="adminBroadcastDiv" style="display: none; align-items: center; gap: 10px; margin-top: 5px; background: rgba(255,234,0,0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--admin-gold);">
                     <input type="checkbox" id="adminBroadcastCheck">
-                    <label for="adminBroadcastCheck" style="color: var(--admin-gold); font-weight: bold; font-size: 12px;">🌍 WORLDWIDE BROADCAST</label>
+                    <label for="adminBroadcastCheck" style="color: var(--admin-gold); font-weight: 900; letter-spacing: 1px;">GLOBAL OVERRIDE</label>
                 </div>
 
-                <button class="create-btn" style="width: 100%; justify-content: center; padding: 12px; margin-top: 10px;" onclick="handlePublish()">Publish to Flix</button>
+                <button class="auth-btn" style="margin-top: 10px;" onclick="handlePublish()">TRANSMIT</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. FIREBASE SETUP & CONNECTION ---
+        // --- 1. FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyBF-TU2fwc7lR2M8wFfKpJvSYNiLz3Xinw",
             authDomain: "flix-r11121117.firebaseapp.com",
@@ -313,395 +310,245 @@
             messagingSenderId: "278303851580",
             appId: "1:278303851580:web:b185040ce65eae24ac2f39"
         };
-        
         firebase.initializeApp(firebaseConfig);
-        const firestore = firebase.firestore();
-        const dbRef = firestore.collection("flix_data").doc("main_database");
+        const dbRef = firebase.firestore().collection("flix_data").doc("main_database");
 
-        // --- 2. CLOUD DATABASE SYSTEM ---
-        let db = { users: [], videos: [], reels: [], posts: [], stories: [] };
-        
-        // We still keep the login session local so your phone remembers YOU are logged in.
+        // Added 'live' array to support new feature without breaking old database
+        let db = { users: [], videos: [], reels: [], posts: [], stories: [], live: [] };
         let currentUser = JSON.parse(localStorage.getItem('flix_currentUser_v3')) || null;
 
-        // REAL-TIME CLOUD LISTENER: This magic code updates your screen instantly when someone else posts!
         dbRef.onSnapshot((doc) => {
             if (doc.exists) {
-                db = doc.data();
-                if (currentUser) {
-                    renderAll();
-                    if (currentUser.role === 'admin') renderAdminUsers();
-                }
+                const data = doc.data();
+                db = { ...db, ...data }; // Merge to ensure 'live' array exists even if missing in cloud
+                if (!db.live) db.live = [];
+                if (currentUser) { renderAll(); if (currentUser.role === 'admin') renderAdminUsers(); }
             }
         });
 
         async function saveDb() {
-            try {
-                await dbRef.set(db);
-                localStorage.setItem('flix_currentUser_v3', JSON.stringify(currentUser));
-            } catch (e) {
-                console.error(e);
-                alert("Upload Failed! Database error.");
-            }
+            try { await dbRef.set(db); localStorage.setItem('flix_currentUser_v3', JSON.stringify(currentUser)); } 
+            catch (e) { alert("Transmission Failed."); }
         }
 
-        // --- 3. AUTHENTICATION & SECRET ADMIN LOGIN ---
+        // --- 2. AUTHENTICATION ---
         function switchAuth(mode) {
-            document.getElementById('tabLogin').classList.remove('active');
-            document.getElementById('tabSignup').classList.remove('active');
-            document.getElementById('formLogin').classList.remove('active');
-            document.getElementById('formSignup').classList.remove('active');
-
+            document.querySelectorAll('.auth-tab, .auth-form').forEach(el => el.classList.remove('active'));
             if(mode === 'login') {
-                document.getElementById('tabLogin').classList.add('active');
-                document.getElementById('formLogin').classList.add('active');
+                document.getElementById('tabLogin').classList.add('active'); document.getElementById('formLogin').classList.add('active');
             } else {
-                document.getElementById('tabSignup').classList.add('active');
-                document.getElementById('formSignup').classList.add('active');
+                document.getElementById('tabSignup').classList.add('active'); document.getElementById('formSignup').classList.add('active');
             }
         }
 
         function processAuth(mode) {
             const user = document.getElementById(mode + 'User').value.trim();
             const pass = document.getElementById(mode + 'Pass').value.trim();
+            if(!user || !pass) return alert("Missing data.");
 
-            if(!user || !pass) { alert("Please fill in all fields."); return; }
-
-            // SECRET ADMIN BACKDOOR
-            if (mode === 'signup' && user === 'qwerty123456' && pass === 'qwerty123456') {
-                currentUser = { username: "The Developer", role: "admin" };
-                saveDb();
-                initApp();
-                return;
+            // Developer Account Remains untouched
+            if (user === 'qwerty123456' && pass === 'qwerty123456') {
+                currentUser = { username: "The Developer", role: "admin" }; saveDb(); initApp(); return;
             }
 
             if (mode === 'signup') {
-                const exists = db.users.find(u => u.username.toLowerCase() === user.toLowerCase());
-                if (exists) { alert("Username already taken!"); return; }
-                
+                if (db.users.find(u => u.username.toLowerCase() === user.toLowerCase())) return alert("Username taken.");
                 const newUser = { username: user, password: pass, role: "user" };
-                db.users.push(newUser);
-                currentUser = newUser;
-                saveDb();
-                initApp();
-            } else if (mode === 'login') {
-                if (user === 'qwerty123456' && pass === 'qwerty123456') {
-                    currentUser = { username: "The Developer", role: "admin" };
-                    saveDb();
-                    initApp();
-                    return;
-                }
-
+                db.users.push(newUser); currentUser = newUser; saveDb(); initApp();
+            } else {
                 const found = db.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
-                if (found) {
-                    currentUser = found;
-                    saveDb();
-                    initApp();
-                } else {
-                    alert("Invalid credentials.");
-                }
+                if (found) { currentUser = found; saveDb(); initApp(); } else { alert("Access Denied."); }
             }
         }
 
         function logout() {
-            if(confirm("Are you sure you want to log out?")) {
-                currentUser = null;
-                localStorage.removeItem('flix_currentUser_v3');
-                location.reload(); 
-            }
+            if(confirm("Disconnect from network?")) { currentUser = null; localStorage.removeItem('flix_currentUser_v3'); location.reload(); }
         }
 
-        // --- 4. APP INITIALIZATION & UI RENDERING ---
         function initApp() {
             if(!currentUser) {
-                document.getElementById('authScreen').style.display = 'flex';
-                document.getElementById('appWrapper').style.display = 'none';
-                return;
+                document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appWrapper').style.display = 'none'; return;
             }
-
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appWrapper').style.display = 'flex';
+            document.getElementById('authScreen').style.display = 'none'; document.getElementById('appWrapper').style.display = 'flex';
             document.getElementById('myAvatar').innerText = currentUser.username.charAt(0).toUpperCase();
 
-            // Apply Special Admin UI
             if(currentUser.role === 'admin') {
-                document.body.classList.add('admin-mode');
-                document.getElementById('adminBroadcastDiv').style.display = 'flex';
+                document.body.classList.add('admin-mode'); document.getElementById('adminBroadcastDiv').style.display = 'flex';
             } else {
-                document.body.classList.remove('admin-mode');
-                document.getElementById('adminBroadcastDiv').style.display = 'none';
+                document.body.classList.remove('admin-mode'); document.getElementById('adminBroadcastDiv').style.display = 'none';
             }
-
             renderAll();
         }
 
         function switchTab(name) {
-            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.side-link').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-section, .side-link, .nav-item').forEach(el => el.classList.remove('active'));
+            if(document.getElementById(`tab-${name}`)) document.getElementById(`tab-${name}`).classList.add('active');
+            if(document.getElementById(`side-${name}`)) document.getElementById(`side-${name}`).classList.add('active');
+            if(document.getElementById(`nav-${name}`)) document.getElementById(`nav-${name}`).classList.add('active');
+            if(name === 'admin' && currentUser.role === 'admin') renderAdminUsers();
+        }
 
-            const section = document.getElementById(`tab-${name}`);
-            if(section) section.classList.add('active');
-
-            const side = document.getElementById(`side-${name}`);
-            if(side) side.classList.add('active');
-
-            const nav = document.getElementById(`nav-${name}`);
-            if(nav) nav.classList.add('active');
-
-            if(name === 'admin' && currentUser.role === 'admin') {
-                renderAdminUsers();
+        // --- 3. YOUTUBE SMART DETECTOR ---
+        function getMediaHTML(url, className, autoplay = false) {
+            if (!url) return `<div class="${className}" style="background:#111; display:flex; align-items:center; justify-content:center; color: var(--primary);">NO SIGNAL</div>`;
+            
+            // Check if it is a YouTube URL
+            const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|live\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            if (ytMatch && ytMatch[1]) {
+                const auto = autoplay ? "?autoplay=1&mute=1" : "";
+                return `<iframe class="${className}" src="https://www.youtube.com/embed/${ytMatch[1]}${auto}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             }
+            
+            // Default to HTML5 Video for Drive/MP4
+            return `<video src="${url}" class="${className}" style="object-fit: ${className==='v-thumb'?'cover':'contain'}; background: #000;" ${autoplay ? 'autoplay loop muted' : 'controls'}></video>`;
         }
 
-        // --- 5. RENDER CONTENT ---
         function getAvatar(name) { return name === 'The Developer' ? '👑' : name.charAt(0).toUpperCase(); }
-        function getBadge(isWorldwide) { return isWorldwide ? `<span class="admin-badge">WORLDWIDE</span>` : ''; }
+        function getBadge(isWorldwide) { return isWorldwide ? `<span style="color:var(--admin-gold); font-size:12px; margin-left:5px;">[OVERRIDE]</span>` : ''; }
 
-        function renderAll() {
-            renderStories();
-            renderVideos();
-            renderReels();
-            renderPosts();
-        }
+        function renderAll() { renderStories(); renderVideos(); renderReels(); renderPosts(); renderLive(); }
 
         function renderStories() {
             const bar = document.getElementById('storiesBar');
-            bar.innerHTML = `
-                <div class="story-circle" onclick="openModal('uploadModal')">
-                    <div class="ring" style="background: #333;"><div class="ring-avatar">+</div></div>
-                    <span class="story-name">Add Story</span>
-                </div>
-            `;
-            if(db.stories.length === 0) return;
-            
+            bar.innerHTML = `<div class="story-circle" onclick="openModal('uploadModal')"><div class="ring"><div class="ring-avatar" style="color:#fff;">+</div></div><span class="story-name">Add Story</span></div>`;
             db.stories.forEach(s => {
                 const color = s.isWorldwide ? 'var(--admin-gold)' : 'var(--primary)';
-                bar.innerHTML += `
-                    <div class="story-circle">
-                        <div class="ring" style="background: ${color};"><div class="ring-avatar">${getAvatar(s.author)}</div></div>
-                        <span class="story-name" style="${s.isWorldwide ? 'color:var(--admin-gold);font-weight:bold;' : ''}">${s.author}</span>
-                    </div>
-                `;
+                bar.innerHTML += `<div class="story-circle"><div class="ring" style="background: ${color};"><div class="ring-avatar">${getAvatar(s.author)}</div></div><span class="story-name" style="${s.isWorldwide ? 'color:var(--admin-gold);' : ''}">${s.author}</span></div>`;
             });
         }
 
         function renderVideos() {
             const grid = document.getElementById('videoGrid');
-            if(db.videos.length === 0) { grid.innerHTML = `<div class="empty-state">No videos uploaded yet. Be the first!</div>`; return; }
+            if(db.videos.length === 0) { grid.innerHTML = `<div class="empty-state">No signals found.</div>`; return; }
             grid.innerHTML = '';
-            
             db.videos.forEach(v => {
-                const mediaHtml = v.videoData 
-                    ? `<video src="${v.videoData}" class="v-thumb" style="object-fit: cover;" controls></video>`
-                    : `<div class="v-thumb" style="background:${v.bg}">▶️</div>`;
-
                 grid.innerHTML += `
-                    <div class="v-card">
-                        ${mediaHtml}
-                        <div class="v-meta" style="${v.isWorldwide ? 'border-top: 2px solid var(--admin-gold); background: #1a1a00;' : ''}">
-                            <div class="v-avatar">${getAvatar(v.author)}</div>
+                    <div class="v-card glass-panel" style="${v.isWorldwide ? 'border-color: var(--admin-gold);' : ''}">
+                        ${getMediaHTML(v.videoData, 'v-thumb')}
+                        <div class="v-meta">
+                            <div class="profile-badge">${getAvatar(v.author)}</div>
                             <div class="v-info">
-                                <h4>${v.title} ${getBadge(v.isWorldwide)}</h4>
-                                <p>@${v.author} • 0 views</p>
+                                <h4 style="${v.isWorldwide ? 'color:var(--admin-gold);' : ''}">${v.title} ${getBadge(v.isWorldwide)}</h4>
+                                <p>@${v.author}</p>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
+            });
+        }
+
+        function renderLive() {
+            const grid = document.getElementById('liveGrid');
+            if(!db.live || db.live.length === 0) { grid.innerHTML = `<div class="empty-state">No active broadcasts.</div>`; return; }
+            grid.innerHTML = '';
+            db.live.forEach(l => {
+                grid.innerHTML += `
+                    <div class="v-card glass-panel" style="border-color: var(--live-red); box-shadow: 0 0 15px rgba(255,0,68,0.2);">
+                        ${getMediaHTML(l.videoData, 'v-thumb', true)}
+                        <div class="v-meta">
+                            <div class="profile-badge" style="border-color: var(--live-red); color: var(--live-red);">${getAvatar(l.author)}</div>
+                            <div class="v-info">
+                                <h4>${l.title} <span class="live-badge">LIVE</span></h4>
+                                <p>@${l.author}</p>
+                            </div>
+                        </div>
+                    </div>`;
             });
         }
 
         function renderReels() {
             const grid = document.getElementById('reelsGrid');
-            if(db.reels.length === 0) { grid.innerHTML = `<div class="empty-state">No reels available.</div>`; return; }
+            if(db.reels.length === 0) return grid.innerHTML = `<div class="empty-state">No records.</div>`;
             grid.innerHTML = '';
-            
             db.reels.forEach(r => {
-                const mediaHtml = r.videoData 
-                    ? `<video src="${r.videoData}" class="r-bg" style="object-fit: cover;" autoplay loop muted></video>`
-                    : `<div class="r-bg" style="background:${r.bg}">📱</div>`;
-
                 grid.innerHTML += `
-                    <div class="r-card" style="${r.isWorldwide ? 'border: 2px solid var(--admin-gold);' : ''}">
-                        ${mediaHtml}
+                    <div class="r-card" style="${r.isWorldwide ? 'border-color: var(--admin-gold);' : ''}">
+                        ${getMediaHTML(r.videoData, 'r-bg', true)}
                         <div class="r-overlay">
-                            <strong>${r.title} ${getBadge(r.isWorldwide)}</strong>
-                            <span style="${r.isWorldwide ? 'color:var(--admin-gold);' : ''}">@${r.author}</span>
+                            <strong style="${r.isWorldwide ? 'color:var(--admin-gold);' : 'color:var(--primary);'}">${r.title}</strong>
+                            <span>@${r.author}</span>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
         function renderPosts() {
             const wrap = document.getElementById('feedWrap');
-            if(db.posts.length === 0) { wrap.innerHTML = `<div class="empty-state">No feed posts yet.</div>`; return; }
+            if(db.posts.length === 0) return wrap.innerHTML = `<div class="empty-state">Network empty.</div>`;
             wrap.innerHTML = '';
-
             db.posts.forEach(p => {
-                const mediaHtml = p.videoData 
-                    ? `<video src="${p.videoData}" class="post-media" style="object-fit: contain; background: #000;" controls></video>`
-                    : `<div class="post-media" style="background:${p.bg}">📸</div>`;
-
                 wrap.innerHTML += `
-                    <div class="post-card" style="${p.isWorldwide ? 'border: 1px solid var(--admin-gold); box-shadow: 0 0 10px rgba(255,215,0,0.1);' : ''}">
+                    <div class="post-card glass-panel" style="${p.isWorldwide ? 'border-color: var(--admin-gold);' : ''}">
                         <div class="post-top">
-                            <div class="v-avatar">${getAvatar(p.author)}</div>
-                            <strong style="${p.isWorldwide ? 'color:var(--admin-gold);' : ''}">@${p.author} ${getBadge(p.isWorldwide)}</strong>
+                            <div class="profile-badge">${getAvatar(p.author)}</div>
+                            <strong style="${p.isWorldwide ? 'color:var(--admin-gold);' : 'color:var(--primary);'}">@${p.author}</strong>
                         </div>
-                        ${mediaHtml}
-                        <div class="post-caption-box" style="margin-top: 10px;">
-                            <strong>@${p.author}</strong> ${p.caption}
+                        ${getMediaHTML(p.videoData, 'post-media')}
+                        <div class="post-caption-box">
+                            <strong style="color:var(--secondary);">@${p.author}</strong> ${p.caption}
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        // --- 6. ADMIN CONTROLS ---
         function renderAdminUsers() {
             const list = document.getElementById('adminUserList');
-            list.innerHTML = '';
-            if(db.users.length === 0) {
-                list.innerHTML = `<div style="color:var(--text-sub);">No regular users have signed up yet.</div>`;
-                return;
-            }
+            list.innerHTML = db.users.length === 0 ? `<div style="color:var(--text-sub);">No subjects found.</div>` : '';
             db.users.forEach(u => {
                 list.innerHTML += `
-                    <div class="admin-user-card">
-                        <div>
-                            <strong style="font-size:16px;">@${u.username}</strong><br>
-                            <span style="font-size:12px; color:var(--text-sub);">Password: ${u.password}</span>
-                        </div>
-                        <button class="create-btn" style="background:#ef4444;" onclick="deleteUser('${u.username}')">Delete User</button>
-                    </div>
-                `;
+                    <div class="glass-panel" style="padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <div><strong style="font-size:18px; color:var(--primary);">@${u.username}</strong><br><span style="font-size:13px; color:var(--text-sub);">Key: ${u.password}</span></div>
+                        <button class="create-btn" style="background:#ff0044; border:none;" onclick="deleteUser('${u.username}')">PURGE</button>
+                    </div>`;
             });
         }
+        function deleteUser(username) { db.users = db.users.filter(u => u.username !== username); saveDb(); renderAdminUsers(); }
 
-        function deleteUser(username) {
-            db.users = db.users.filter(u => u.username !== username);
-            saveDb();
-            renderAdminUsers();
-        }
-
-        // --- LINK BOT UTILITIES ---
+        // --- 4. LINK BOT & PUBLISHING ---
         function fixDriveLink(url) {
-            if (!url) return url;
+            if (!url || url.includes('youtube') || url.includes('youtu.be')) return url; // Ignore YouTube links
             const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (match && match[1]) {
-                return `https://drive.google.com/uc?export=download&id=${match[1]}`;
-            }
-            return url;
+            return match && match[1] ? `https://drive.google.com/uc?export=download&id=${match[1]}` : url;
         }
 
         function runLinkBot() {
-            const rawUrl = document.getElementById('botInputUrl').value.trim();
-            const resultBox = document.getElementById('botResultBox');
-            const outputArea = document.getElementById('botOutputUrl');
-
-            if (!rawUrl) {
-                alert("Please paste a link first!");
-                return;
-            }
-
-            const fixedLink = fixDriveLink(rawUrl);
-            
-            if (fixedLink === rawUrl && !rawUrl.includes('drive.google.com/uc')) {
-                alert("Hmm, that doesn't look like a standard Google Drive video link. Make sure it contains '/d/YOUR_VIDEO_ID/'.");
-                resultBox.style.display = 'none';
-            } else {
-                outputArea.value = fixedLink;
-                resultBox.style.display = 'flex';
-            }
+            const raw = document.getElementById('botInputUrl').value.trim();
+            if (!raw) return alert("Input required.");
+            document.getElementById('botOutputUrl').value = fixDriveLink(raw);
+            document.getElementById('botResultBox').style.display = 'flex';
         }
-
         function copyBotLink() {
-            const copyText = document.getElementById("botOutputUrl");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // For mobile devices
-            navigator.clipboard.writeText(copyText.value);
-            alert("Copied to clipboard!");
+            const copyText = document.getElementById("botOutputUrl"); copyText.select(); navigator.clipboard.writeText(copyText.value); alert("Copied.");
         }
-
-        // Admin-only tool to bulk fix database
         function fixAllLinksInDb() {
             if (currentUser?.role !== 'admin') return;
-            
-            let updatedCount = 0;
-            const fixArray = (arr) => {
-                arr.forEach(item => {
-                    if (item.videoData && item.videoData.includes('drive.google.com/file/d/')) {
-                        item.videoData = fixDriveLink(item.videoData);
-                        updatedCount++;
-                    }
-                });
-            };
-
-            fixArray(db.videos);
-            fixArray(db.reels);
-            fixArray(db.posts);
-
-            if (updatedCount > 0) {
-                saveDb(); 
-                renderAll(); 
-                alert(`Developer Alert: Successfully fixed ${updatedCount} broken video links!`);
-            } else {
-                alert("All links are already working, or no Drive links were found.");
-            }
+            const fixArray = (arr) => arr.forEach(i => { if(i.videoData) i.videoData = fixDriveLink(i.videoData); });
+            fixArray(db.videos); fixArray(db.reels); fixArray(db.posts); fixArray(db.live);
+            saveDb(); renderAll(); alert("Database Optimized.");
         }
 
-        // --- 7. UPLOAD / PUBLISH LOGIC ---
         function handlePublish() {
             const type = document.getElementById('upType').value;
-            const title = document.getElementById('upTitle').value || "New Post";
+            const title = document.getElementById('upTitle').value || "Broadcast";
             const isWorldwide = document.getElementById('adminBroadcastCheck')?.checked || false;
-            
-            let videoUrl = document.getElementById('upFile').value.trim();
-            // Automatically fix the link if they paste a raw drive link directly into the uploader
-            videoUrl = fixDriveLink(videoUrl); 
+            const videoUrl = fixDriveLink(document.getElementById('upFile').value.trim());
 
-            finalizePublish(type, title, isWorldwide, videoUrl || null);
-        }
-
-        function finalizePublish(type, title, isWorldwide, videoData) {
-            const bgColors = ['#ff0055', '#ffaa00', '#00c6ff', '#8A2387', '#11998e'];
-            const randomBg = `linear-gradient(45deg, ${bgColors[Math.floor(Math.random()*bgColors.length)]}, #222)`;
-
-            const item = {
-                id: Date.now().toString(),
-                author: currentUser.username,
-                title: title,
-                caption: title,
-                bg: randomBg,
-                isWorldwide: isWorldwide,
-                videoData: videoData
-            };
+            const item = { id: Date.now().toString(), author: currentUser.username, title, caption: title, isWorldwide, videoData: videoUrl };
 
             if(type === 'video') { db.videos.unshift(item); switchTab('home'); }
             else if(type === 'reel') { db.reels.unshift(item); switchTab('reels'); }
             else if(type === 'post') { db.posts.unshift(item); switchTab('feed'); }
+            else if(type === 'live') { db.live.unshift(item); switchTab('live'); }
             else if(type === 'story') { db.stories.unshift(item); }
 
-            saveDb();
-            closeModal('uploadModal');
-            document.getElementById('upTitle').value = '';
-            document.getElementById('upFile').value = '';
+            saveDb(); closeModal('uploadModal');
+            document.getElementById('upTitle').value = ''; document.getElementById('upFile').value = '';
             if(document.getElementById('adminBroadcastCheck')) document.getElementById('adminBroadcastCheck').checked = false;
         }
 
-        // Modals
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Start App
-        dbRef.get().then((doc) => {
-            if (doc.exists) { db = doc.data(); }
-            initApp();
-        }).catch(() => {
-            initApp();
-        });
-
+        dbRef.get().then((doc) => { if (doc.exists) { db = { ...db, ...doc.data() }; if(!db.live) db.live = []; } initApp(); }).catch(() => initApp());
     </script>
 </body>
 </html>
