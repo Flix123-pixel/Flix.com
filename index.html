@@ -122,6 +122,14 @@
         .close-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .close-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
+        /* Chat & Call System */
+        .chat-window { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 12px; font-size: 14px; max-width: 80%; width: fit-content; }
+        .msg.sent { background: var(--accent); margin-left: auto; border-bottom-right-radius: 2px; }
+        .msg.recv { background: rgba(255,255,255,0.1); margin-right: auto; border-bottom-left-radius: 2px; }
+        .device-chip { padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
+        .device-chip.active { background: var(--accent); color: white; border-color: white; }
+
         @media (max-width: 768px) {
             aside.sidebar { display: none; }
             .category-bar { margin-top: 10px; }
@@ -159,9 +167,9 @@
         <header>
             <a href="#" class="logo" onclick="switchTab('home')">Flix</a>
             <div class="header-actions">
-                <!-- UPDATED HEADER SPONSOR BUTTON -->
                 <a href="mailto:anvaypandey8@gmail.com?subject=Sponsorship&body=hello i want to sponser you" class="create-btn sponsor-btn hide-mobile">💸 Sponsor Us</a>
                 <button class="create-btn hide-mobile" onclick="openModal('botModal')">🤖 Link Bot</button>
+                <button class="create-btn" onclick="openModal('chatModal'); loadUsersForChat();">💬 Chat & Call</button>
                 <button class="create-btn primary" onclick="openModal('uploadModal')">➕ Upload</button>
                 <div class="profile-badge" id="myAvatar" onclick="logout()" title="Log Out">U</div>
             </div>
@@ -175,7 +183,6 @@
                 <div class="side-link" id="side-feed" onclick="switchTab('feed')">📸 Feed</div>
                 <div class="side-link admin-link" id="side-admin" onclick="switchTab('admin')">👑 Admin</div>
                 <div style="height: 1px; background: var(--panel-border); margin: 15px 0;"></div>
-                <!-- UPDATED SIDEBAR SPONSOR BUTTON -->
                 <a href="mailto:anvaypandey8@gmail.com?subject=Sponsorship&body=hello i want to sponser you" class="side-link" style="color: var(--admin-gold);">💸 Sponsor Us</a>
                 <div class="side-link" onclick="openModal('botModal')">🤖 Fix Broken Links</div>
                 <div class="side-link" onclick="logout()" style="color: var(--danger); margin-top: auto;">🚪 Sign Out</div>
@@ -219,7 +226,6 @@
                         <button class="create-btn primary" onclick="fixAllLinksInDb()">🔧 Auto-Fix All Database Links</button>
                     </div>
 
-                    <!-- NEW: LIVE AD MANAGER -->
                     <div class="section-header" style="color: var(--ad-yellow); margin-top: 40px;">📺 Live Ad Manager</div>
                     <div class="glass-panel" style="padding: 24px; margin-bottom: 30px; border-color: rgba(251, 188, 5, 0.3);">
                         <label style="color: var(--text-dim); font-size: 13px; font-weight: 600;">Sponsor Company Name</label>
@@ -299,21 +305,58 @@
         </div>
     </div>
 
+    <!-- CHAT & CALL MODAL -->
+    <div class="modal-screen" id="chatModal">
+        <div class="modal-window glass-panel" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 20px; font-weight: 700;">Direct Messages</h3>
+                <button class="close-btn" onclick="closeModal('chatModal')">✕</button>
+            </div>
+            
+            <select id="chatUserSelect" onchange="loadUserDevices()" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--panel-border); border-radius: 12px; color: #fff; margin-bottom: 12px; outline: none;">
+                <option value="">Select User to Chat...</option>
+            </select>
+            
+            <div id="deviceSelection" style="display: none; margin-bottom: 16px;">
+                <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 8px;">Select Target Device:</p>
+                <div id="deviceList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <button class="create-btn" style="flex: 1; justify-content: center; background: rgba(52, 199, 89, 0.2); color: #34C759;" onclick="startCall('audio')">📞 Audio Call</button>
+                <button class="create-btn" style="flex: 1; justify-content: center; background: rgba(10, 132, 255, 0.2); color: var(--accent);" onclick="startCall('video')">📹 Video Call</button>
+            </div>
+
+            <div class="chat-window" id="chatMessages"></div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="chatInput" placeholder="Type a message..." style="flex: 1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--panel-border); border-radius: 12px; color: #fff; outline: none;">
+                <button class="auth-btn" style="padding: 12px 20px;" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- 1. FIREBASE SETUP ---
         const firebaseConfig = { apiKey: "AIzaSyBF-TU2fwc7lR2M8wFfKpJvSYNiLz3Xinw", authDomain: "flix-r11121117.firebaseapp.com", projectId: "flix-r11121117", storageBucket: "flix-r11121117.firebasestorage.app", messagingSenderId: "278303851580", appId: "1:278303851580:web:b185040ce65eae24ac2f39" };
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.firestore().collection("flix_data").doc("main_database");
+        const messagesRef = firebase.firestore().collection("flix_messages");
 
         let db = { users: [], videos: [], reels: [], posts: [], ads: [] };
         let currentUser = JSON.parse(localStorage.getItem('flix_currentUser_v3')) || null;
         let activeCategory = 'All'; 
 
+        // DEVICE & CHAT VARIABLES
+        const myDeviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
+        let targetUser = null;
+        let targetDevice = null;
+        let chatListener = null;
+
         dbRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
                 db = { ...db, ...data }; 
-                if (!db.ads) db.ads = []; // Ensure ads array exists
+                if (!db.ads) db.ads = [];
                 if (currentUser) { renderAll(); if (currentUser.role === 'admin') { renderAdminUsers(); renderAdminAds(); } }
             }
         });
@@ -335,15 +378,27 @@
             const pass = document.getElementById(mode + 'Pass').value.trim();
             if(!user || !pass) return;
 
-            if (user === 'qwerty123456' && pass === 'qwerty123456') { currentUser = { username: "The Developer", role: "admin" }; saveDb(); initApp(); return; }
+            if (user === 'qwerty123456' && pass === 'qwerty123456') { 
+                currentUser = { username: "The Developer", role: "admin" }; 
+                saveDb(); initApp(); return; 
+            }
 
             if (mode === 'signup') {
                 if (db.users.find(u => u.username.toLowerCase() === user.toLowerCase())) return alert("Username already taken.");
-                const newUser = { username: user, password: pass, role: "user" };
+                const newUser = { username: user, password: pass, role: "user", devices: [myDeviceId] };
                 db.users.push(newUser); currentUser = newUser; saveDb(); initApp();
             } else {
-                const found = db.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
-                if (found) { currentUser = found; saveDb(); initApp(); } else { alert("Incorrect credentials."); }
+                const foundIndex = db.users.findIndex(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
+                if (foundIndex !== -1) { 
+                    currentUser = db.users[foundIndex]; 
+                    if (!db.users[foundIndex].devices) db.users[foundIndex].devices = [];
+                    if (!db.users[foundIndex].devices.includes(myDeviceId)) {
+                        db.users[foundIndex].devices.push(myDeviceId);
+                    }
+                    saveDb(); initApp(); 
+                } else { 
+                    alert("Incorrect credentials."); 
+                }
             }
         }
 
@@ -389,7 +444,6 @@
 
         function renderAll() { renderVideos(); renderReels(); renderPosts(); }
 
-        // --- NEW: DYNAMIC AD SYSTEM ---
         function renderVideos() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
@@ -403,7 +457,6 @@
             let activeAds = db.ads || [];
             
             filteredVideos.forEach((v, index) => {
-                // INJECT DYNAMIC ADS FROM DATABASE
                 if (index > 0 && index % 4 === 0 && activeAds.length > 0) {
                     const ad = activeAds[adCounter % activeAds.length];
                     grid.innerHTML += `
@@ -475,36 +528,25 @@
             });
         }
 
-        // --- NEW: AD MANAGER LOGIC ---
         function generateAIAd() {
             const sponsor = document.getElementById('adSponsor').value.trim().toLowerCase();
             const urlInput = document.getElementById('adUrl');
-            
             if (!sponsor) return alert("Please enter a company name first!");
-            
-            if (sponsor.includes('airtel')) {
-                urlInput.value = "https://www.youtube.com/watch?v=R08Mep-g0_c";
-            } else if (sponsor.includes('wheel')) {
-                urlInput.value = "https://www.youtube.com/watch?v=zUe3sUxs_3I";
-            } else {
-                urlInput.value = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
-            }
+            if (sponsor.includes('airtel')) { urlInput.value = "https://www.youtube.com/watch?v=R08Mep-g0_c"; } 
+            else if (sponsor.includes('wheel')) { urlInput.value = "https://www.youtube.com/watch?v=zUe3sUxs_3I"; } 
+            else { urlInput.value = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; }
             alert(`AI Video Generated for ${sponsor.toUpperCase()}! You can now click Start Ad.`);
         }
 
         function startAd() {
             const sponsor = document.getElementById('adSponsor').value.trim();
             const rawUrl = document.getElementById('adUrl').value.trim();
-            
             if (!sponsor || !rawUrl) return alert("Please fill in both Sponsor Name and Media URL.");
-            
             const fixedUrl = fixDriveLink(rawUrl);
             const newAd = { id: Date.now().toString(), sponsor: sponsor, title: "Sponsored Message", url: fixedUrl };
-            
             if (!db.ads) db.ads = [];
             db.ads.push(newAd);
             saveDb();
-            
             document.getElementById('adSponsor').value = '';
             document.getElementById('adUrl').value = '';
             renderAdminAds();
@@ -514,10 +556,7 @@
 
         function renderAdminAds() {
             const list = document.getElementById('activeAdsList');
-            if(!db.ads || db.ads.length === 0) {
-                list.innerHTML = `<div style="color:var(--text-dim); font-size:13px;">No active ads currently running.</div>`;
-                return;
-            }
+            if(!db.ads || db.ads.length === 0) { list.innerHTML = `<div style="color:var(--text-dim); font-size:13px;">No active ads currently running.</div>`; return; }
             list.innerHTML = '';
             db.ads.forEach(ad => {
                 list.innerHTML += `
@@ -544,7 +583,6 @@
         }
         function deleteUser(username) { db.users = db.users.filter(u => u.username !== username); saveDb(); renderAdminUsers(); }
 
-        // --- LINK BOT & PUBLISHING ---
         function fixDriveLink(url) {
             if (!url || url.includes('youtube') || url.includes('youtu.be')) return url; 
             const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -571,15 +609,7 @@
             const isWorldwide = document.getElementById('adminBroadcastCheck')?.checked || false;
             const videoUrl = fixDriveLink(document.getElementById('upFile').value.trim());
 
-            const item = { 
-                id: Date.now().toString(), 
-                author: currentUser.username, 
-                title, 
-                caption: title, 
-                category, 
-                isWorldwide, 
-                videoData: videoUrl 
-            };
+            const item = { id: Date.now().toString(), author: currentUser.username, title, caption: title, category, isWorldwide, videoData: videoUrl };
 
             if(type === 'video') { db.videos.unshift(item); switchTab('home'); setCategory(category, document.querySelector(`.cat-chip:contains('${category}')`)); }
             else if(type === 'reel') { db.reels.unshift(item); switchTab('reels'); }
@@ -592,6 +622,103 @@
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- CHAT & CALL LOGIC ---
+        function loadUsersForChat() {
+            const select = document.getElementById('chatUserSelect');
+            select.innerHTML = '<option value="">Select User to Chat...</option>';
+            db.users.forEach(u => {
+                if(u.username !== currentUser.username) {
+                    select.innerHTML += `<option value="${u.username}">@${u.username}</option>`;
+                }
+            });
+        }
+
+        function loadUserDevices() {
+            targetUser = document.getElementById('chatUserSelect').value;
+            const deviceDiv = document.getElementById('deviceSelection');
+            const deviceList = document.getElementById('deviceList');
+            
+            if(!targetUser) { deviceDiv.style.display = 'none'; return; }
+            
+            const userObj = db.users.find(u => u.username === targetUser);
+            if(userObj && userObj.devices && userObj.devices.length > 0) {
+                deviceDiv.style.display = 'block';
+                deviceList.innerHTML = '';
+                userObj.devices.forEach((dev, i) => {
+                    deviceList.innerHTML += `<div class="device-chip ${i===0?'active':''}" onclick="selectDevice('${dev}', this)">Device ${i+1}</div>`;
+                });
+                targetDevice = userObj.devices[0];
+                listenToChats();
+            } else {
+                deviceDiv.style.display = 'none';
+                targetDevice = null;
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-state" style="padding:20px;">User has no active devices.</div>';
+            }
+        }
+
+        function selectDevice(devId, element) {
+            targetDevice = devId;
+            document.querySelectorAll('.device-chip').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            listenToChats();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if(!text || !targetUser || !targetDevice) return;
+
+            messagesRef.add({
+                sender: currentUser.username,
+                receiver: targetUser,
+                targetDevice: targetDevice,
+                text: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            input.value = '';
+        }
+
+        function listenToChats() {
+            if(chatListener) chatListener(); 
+            if(!targetUser || !targetDevice) return;
+
+            const chatBox = document.getElementById('chatMessages');
+            chatBox.innerHTML = '';
+
+            chatListener = messagesRef
+                .where('targetDevice', 'in', [targetDevice, myDeviceId])
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    chatBox.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        if((msg.sender === currentUser.username && msg.receiver === targetUser) || 
+                           (msg.sender === targetUser && msg.receiver === currentUser.username && msg.targetDevice === myDeviceId)) {
+                            
+                            const isSent = msg.sender === currentUser.username;
+                            chatBox.innerHTML += `<div class="msg ${isSent ? 'sent' : 'recv'}">${msg.text}</div>`;
+                        }
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+
+        function startCall(type) {
+            if(!targetUser || !targetDevice) return alert("Select a user and device first!");
+            const callConfirm = confirm(`Initiating ${type} call to @${targetUser} on their selected device. \n\n(Note: Full WebRTC media streaming requires integrating RTCPeerConnection and exchanging ICE candidates via Firestore. Signaling target registered: ${targetDevice})`);
+            
+            if(callConfirm) {
+                messagesRef.add({
+                    sender: currentUser.username,
+                    receiver: targetUser,
+                    targetDevice: targetDevice,
+                    text: `📞 <i>Started a ${type} call...</i>`,
+                    type: 'call_signal',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        }
 
         dbRef.get().then((doc) => { if (doc.exists) { db = { ...db, ...doc.data() }; } initApp(); }).catch(() => initApp());
     </script>
