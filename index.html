@@ -1,10 +1,308 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090e"><title>Flix — Watch. Create. Connect.</title><style>
-:root{--bg:#08090e;--card:#121521;--card2:#1a1e2d;--line:#292f43;--text:#f6f7fb;--muted:#9299b0;--blue:#5b8cff;--violet:#a855f7;--red:#ff5577}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0,#1e2452 0,transparent 32%),var(--bg);color:var(--text);font:14px Inter,system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.shell{max-width:1320px;margin:auto;min-height:100vh}header{height:70px;display:flex;align-items:center;gap:28px;padding:0 24px;border-bottom:1px solid var(--line);background:#08090ecc;backdrop-filter:blur(18px);position:sticky;top:0;z-index:5}.logo{font-size:27px;font-weight:900;letter-spacing:-1px;background:linear-gradient(100deg,#65a1ff,#bd73ff);-webkit-background-clip:text;color:transparent}.search{flex:1;max-width:480px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 15px;color:#fff;outline:0}.search:focus{border-color:var(--blue)}.head-actions{display:flex;gap:9px;align-items:center;margin-left:auto}.btn{background:var(--card2);border:1px solid var(--line);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700}.btn:hover{border-color:#7280ad;transform:translateY(-1px)}.primary{background:linear-gradient(110deg,var(--blue),var(--violet));border:0}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--violet));font-weight:900;cursor:pointer}.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 70px)}aside{border-right:1px solid var(--line);padding:24px 14px}.nav{display:block;width:100%;text-align:left;background:transparent;border:0;color:var(--muted);padding:13px 15px;border-radius:10px;font-weight:700;margin-bottom:5px}.nav:hover,.nav.active{background:var(--card2);color:#fff}.content{padding:26px;min-width:0}.hero{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.hero h1{font-size:30px;margin:0 0 6px;letter-spacing:-1px}.hero p{margin:0;color:var(--muted)}.chips{display:flex;gap:9px;overflow:auto;margin-bottom:22px}.chip{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:22px;padding:9px 15px;cursor:pointer}.chip.active,.chip:hover{background:#fff;color:#07080d;border-color:#fff}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;position:relative;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#58678f;box-shadow:0 14px 35px #0006}.media{width:100%;aspect-ratio:16/9;object-fit:cover;background:#05060a;display:block}.meta{padding:13px 14px 15px;display:flex;gap:11px}.mini{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#36466f,#7c3aed);font-weight:800}.info{min-width:0}.info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.info span{display:block;color:var(--muted);font-size:12px;margin-top:5px}.like{position:absolute;right:10px;top:10px;border:0;border-radius:20px;background:#0009;color:#fff;padding:7px 9px}.liked{color:#ff5577}.empty{text-align:center;padding:80px 20px;color:var(--muted);border:1px dashed var(--line);border-radius:15px}.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:10;padding:18px}.modal.open{display:grid}.dialog{width:min(460px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 20px 80px #000}.dialog h2{margin:0 0 18px}.form{display:grid;gap:12px}.form input,.form select{padding:12px;border-radius:9px;border:1px solid var(--line);background:var(--card2);color:#fff;outline:0}.form input:focus{border-color:var(--blue)}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:#090a10;padding:11px 16px;border-radius:10px;font-weight:700;display:none;z-index:20}@media(max-width:760px){header{gap:12px;padding:0 14px}.search{order:3;position:absolute;top:78px;left:14px;right:14px;max-width:none}.layout{grid-template-columns:1fr;padding-top:55px}aside{display:flex;overflow:auto;border:0;border-bottom:1px solid var(--line);padding:8px 14px;gap:5px;position:sticky;top:70px;background:#08090ef2;z-index:4}.nav{white-space:nowrap;width:auto;margin:0}.content{padding:18px 14px}.head-actions .btn{display:none}.hero h1{font-size:25px}}
-</style></head><body><div class="shell"><header><div class="logo">Flix</div><input class="search" id="search" placeholder="Search videos, creators, categories…"><div class="head-actions"><button class="btn primary" id="uploadBtn">＋ Upload</button><div class="avatar" id="avatar" title="Sign in">?</div></div></header><div class="layout"><aside><button class="nav active" data-view="home">⌂ Home</button><button class="nav" data-view="shorts">▣ Shorts</button><button class="nav" data-view="saved">♡ Saved</button><button class="nav" data-view="about">ⓘ About</button></aside><main class="content"><section class="hero"><div><h1 id="heading">Discover your next favorite</h1><p id="sub">Fresh videos from the Flix community.</p></div></section><div class="chips" id="chips"><button class="chip active" data-cat="All">All</button><button class="chip" data-cat="Gaming">Gaming</button><button class="chip" data-cat="Funny">Funny</button><button class="chip" data-cat="Music">Music</button><button class="chip" data-cat="Education">Education</button><button class="chip" data-cat="Travel">Travel</button></div><div class="grid" id="grid"></div></main></div></div><div class="modal" id="modal"><div class="dialog"><div class="row"><h2 id="modalTitle">Create an account</h2><button class="btn" id="close">×</button></div><form class="form" id="form"><input id="username" required minlength="2" placeholder="Your display name"><input id="media" required type="url" placeholder="Media URL (MP4, image, YouTube embed)"><input id="title" required maxlength="80" placeholder="Video title"><select id="category"><option>Gaming</option><option>Funny</option><option>Music</option><option>Education</option><option>Travel</option></select><button class="btn primary" type="submit">Publish to Flix</button></form></div></div><div class="toast" id="toast"></div><script>
-const KEY='flix_local_v2',defaultItems=[{id:'welcome',title:'Welcome to Flix',author:'Flix Team',category:'Education',url:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',likes:12},{id:'travel',title:'A quiet day by the sea',author:'Maya',category:'Travel',url:'https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4',likes:8}];let state=JSON.parse(localStorage.getItem(KEY)||'null')||{user:null,items:defaultItems,saved:[]},category='All',view='home';const $=id=>document.getElementById(id),save=()=>localStorage.setItem(KEY,JSON.stringify(state)),toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t.x);t.x=setTimeout(()=>t.style.display='none',2400)};
-function initials(n){return(n||'?').trim().charAt(0).toUpperCase()}function safe(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function media(url){const u=safe(url);if(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url))return`<img class="media" src="${u}" loading="lazy" alt="">`;return`<video class="media" src="${u}" controls preload="metadata"></video>`}
-function render(){let list=state.items.filter(x=>view==='saved'?state.saved.includes(x.id):view==='shorts'?x.short!==false:true);if(category!=='All')list=list.filter(x=>x.category===category);const q=$('search').value.toLowerCase().trim();if(q)list=list.filter(x=>(x.title+x.author+x.category).toLowerCase().includes(q));$('grid').innerHTML=list.length?list.map(x=>`<article class="card">${media(x.url)}<button class="like ${state.saved.includes(x.id)?'liked':''}" data-like="${x.id}">${state.saved.includes(x.id)?'♥':'♡'} ${x.likes||0}</button><div class="meta"><div class="mini">${initials(x.author)}</div><div class="info"><strong>${safe(x.title)}</strong><span>${safe(x.author)} · ${safe(x.category)}</span></div></div></article>`).join(''):`<div class="empty" style="grid-column:1/-1">No videos match this view yet.<br><button class="btn primary" style="margin-top:15px" onclick="openUpload()">Upload the first one</button></div>`;document.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;state.saved=state.saved.includes(id)?state.saved.filter(x=>x!==id):[...state.saved,id];save();render()})}
-function openUpload(){if(!state.user){$('modalTitle').textContent='Sign in to publish';$('form').innerHTML='<input id="loginName" required placeholder="Display name"><button class="btn primary">Continue</button>';$('form').onsubmit=e=>{e.preventDefault();state.user=$('loginName').value.trim();save();$('modal').classList.remove('open');updateUser();toast('Welcome to Flix, '+state.user+'!')};}else{ $('modalTitle').textContent='Publish a video';$('form').innerHTML='<input id="media" required type="url" placeholder="Media URL (MP4 or image)"><input id="title" required maxlength="80" placeholder="Video title"><select id="category"><option>Gaming</option><option>Funny</option><option>Music</option><option>Education</option><option>Travel</option></select><button class="btn primary">Publish to Flix</button>';$('form').onsubmit=e=>{e.preventDefault();state.items.unshift({id:Date.now().toString(),title:$('title').value,author:state.user,category:$('category').value,url:$('media').value,likes:0,short:false});save();$('modal').classList.remove('open');render();toast('Published successfully')};}$('modal').classList.add('open')}
-function updateUser(){$('avatar').textContent=initials(state.user);$('avatar').title=state.user?'Signed in as '+state.user:'Sign in'}$('uploadBtn').onclick=openUpload;$('avatar').onclick=()=>state.user?(state.user=null,save(),updateUser(),toast('Signed out')):openUpload;$('close').onclick=()=>$('modal').classList.remove('open');$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').classList.remove('open')};$('search').oninput=render;document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{category=b.dataset.cat;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('heading').textContent=view==='saved'?'Your saved videos':view==='shorts'?'Shorts':'Discover your next favorite';$('chips').style.display=view==='about'?'none':'flex';if(view==='about')$('grid').innerHTML='<div class="empty" style="grid-column:1/-1"><h2>Flix</h2>Share, discover and support independent creators.<br>This static build stores demo data locally in your browser.</div>';else render()});updateUser();render();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flix - Stream Movies & TV Shows</title>
+    <style>
+        :root {
+            --primary-red: #e50914;
+            --primary-red-hover: #c10711;
+            --bg-color: #000000;
+            --card-bg: rgba(0, 0, 0, 0.75);
+            --input-bg: #333333;
+            --text-color: #ffffff;
+            --text-muted: #8c8c8c;
+            --error-color: #e87c03;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0.8) 100%), url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=2069&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .logo {
+            color: var(--primary-red);
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .auth-container {
+            display: flex;
+            gap: 2rem;
+            max-width: 1000px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 3rem 4rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-card h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: outline 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: 2px solid var(--primary-red);
+            background-color: #454545;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .toggle-password:hover {
+            color: var(--text-color);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-red);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-red-hover);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .auth-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .auth-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo">Flix</div>
+
+    <div class="auth-container">
+        <!-- Login Card -->
+        <div class="auth-card">
+            <h2>Sign In</h2>
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <input type="text" id="loginUser" class="form-control" placeholder="Email or Username" required>
+                    <div class="error-message" id="loginUserError">Please enter a valid email or username.</div>
+                </div>
+                
+                <div class="form-group password-wrapper">
+                    <input type="password" id="loginPass" class="form-control" placeholder="Password" required>
+                    <button type="button" class="toggle-password" onclick="toggleVisibility('loginPass', this)">SHOW</button>
+                    <div class="error-message" id="loginPassError">Your password must contain between 4 and 60 characters.</div>
+                </div>
+                
+                <div class="error-message" id="loginGlobalError" style="margin-top: 1rem; color: var(--error-color);"></div>
+
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Create Account Card -->
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <form id="signupForm" novalidate>
+                <div class="form-group">
+                    <input type="text" id="signupName" class="form-control" placeholder="Full Name" required>
+                    <div class="error-message" id="signupNameError">Full name is required.</div>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="signupUsername" class="form-control" placeholder="Username (e.g., demoUser)" required>
+                    <div class="error-message" id="signupUsernameError">Username is required.</div>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="signupEmail" class="form-control" placeholder="Email Address" required>
+                    <div class="error-message" id="signupEmailError">Please enter a valid email address.</div>
+                </div>
+                
+                <div class="form-group password-wrapper">
+                    <input type="password" id="signupPass" class="form-control" placeholder="Password (e.g., YourPassword123)" required>
+                    <button type="button" class="toggle-password" onclick="toggleVisibility('signupPass', this)">SHOW</button>
+                    <div class="error-message" id="signupPassError">Password is required.</div>
+                </div>
+
+                <div class="form-group password-wrapper">
+                    <input type="password" id="signupConfirmPass" class="form-control" placeholder="Confirm Password" required>
+                    <button type="button" class="toggle-password" onclick="toggleVisibility('signupConfirmPass', this)">SHOW</button>
+                    <div class="error-message" id="signupConfirmPassError">Passwords do not match.</div>
+                </div>
+
+                <div class="error-message" id="signupGlobalError" style="margin-top: 1rem; color: #4bb543;"></div>
+
+                <button type="submit" class="btn-primary">Get Started</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Password Visibility Logic
+        function toggleVisibility(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btnElement.textContent = "HIDE";
+            } else {
+                input.type = "password";
+                btnElement.textContent = "SHOW";
+            }
+        }
+
+        // Login Form Validation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent actual form submission for demo
+            let isValid = true;
+            
+            const user = document.getElementById('loginUser');
+            const pass = document.getElementById('loginPass');
+            const userError = document.getElementById('loginUserError');
+            const passError = document.getElementById('loginPassError');
+            const globalError = document.getElementById('loginGlobalError');
+
+            // Reset errors
+            userError.style.display = 'none';
+            passError.style.display = 'none';
+            globalError.style.display = 'none';
+
+            if (user.value.trim() === '') {
+                userError.style.display = 'block';
+                isValid = false;
+            }
+
+            if (pass.value.trim() === '') {
+                passError.style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // IMPORTANT: This is demo logic. Never handle real auth purely on the frontend.
+                // In a real app, send credentials securely to your backend via API.
+                globalError.style.color = '#4bb543'; // Success green
+                globalError.textContent = "Demo login successful! (Backend connection required for real app)";
+                globalError.style.display = 'block';
+            }
+        });
+
+        // Sign Up Form Validation
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent actual form submission for demo
+            let isValid = true;
+            
+            const fields = ['Name', 'Username', 'Email', 'Pass', 'ConfirmPass'];
+            
+            // Reset all errors
+            fields.forEach(field => {
+                document.getElementById('signup' + field + 'Error').style.display = 'none';
+            });
+            document.getElementById('signupGlobalError').style.display = 'none';
+
+            // Check for empty fields
+            fields.forEach(field => {
+                const el = document.getElementById('signup' + field);
+                if (el.value.trim() === '') {
+                    document.getElementById('signup' + field + 'Error').style.display = 'block';
+                    isValid = false;
+                }
+            });
+
+            // Password mismatch check
+            const pass = document.getElementById('signupPass').value;
+            const confirmPass = document.getElementById('signupConfirmPass').value;
+            
+            if (pass !== '' && confirmPass !== '' && pass !== confirmPass) {
+                const confirmError = document.getElementById('signupConfirmPassError');
+                confirmError.textContent = "Passwords do not match.";
+                confirmError.style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // IMPORTANT: In a real app, hash passwords on the backend and store them securely in a database.
+                document.getElementById('signupGlobalError').textContent = "Demo account created successfully! (Backend connection required for real app)";
+                document.getElementById('signupGlobalError').style.display = 'block';
+                this.reset(); // Clear form
+            }
+        });
+    </script>
+</body>
+</html>
